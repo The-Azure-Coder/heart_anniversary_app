@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'Registration.dart';
+import 'login.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -128,26 +129,34 @@ class _MyhomePage extends State<HomePage> {
                           ),
                         ),
                       ),
-
-                      Container(
-                        decoration:  BoxDecoration(
-                          border: Border.all(
-                            color: Colors.blue
+                      GestureDetector(
+                        onTap:() {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => const Login()
+                            ),
+                          );
+                        },
+                        child: Container(
+                          decoration:  BoxDecoration(
+                            border: Border.all(
+                              color: Colors.blue
+                            ),
+                            borderRadius: const BorderRadius.all(
+                                Radius.circular(25)
+                            )
                           ),
-                          borderRadius: const BorderRadius.all(
-                              Radius.circular(25)
-                          )
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 15,
-                          horizontal: 45,
-                        ),
-                        child: const Text(
-                          'LOGIN',
-                          style: TextStyle(
-                            color: Colors.blue
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 15,
+                            horizontal: 45,
                           ),
-                        ),
+                          child: const Text(
+                            'LOGIN',
+                            style: TextStyle(
+                              color: Colors.blue
+                            ),
+                          ),
+                        )
                       )
                     ],
                   )
