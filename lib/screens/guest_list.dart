@@ -89,6 +89,7 @@ class _GuestListState extends State<GuestList> {
                       fontWeight: FontWeight.w600)),
               Container(
                 width: 150,
+                height: 45,
                 decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
                     border: Border.all(
