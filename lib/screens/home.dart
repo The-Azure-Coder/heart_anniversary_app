@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'Registration.dart';
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -100,22 +100,35 @@ class _MyhomePage extends State<HomePage> {
                     //THIS ROW HOLDS THE BUTTONS THAT WILL LEAD TO REGISTRATION OR LOGIN
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Container(
-                        decoration: const BoxDecoration(
-                          color:Colors.blue,
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(25)
-                          )
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 15,
-                          horizontal: 45,
-                        ),
-                        child: const Text(
-                          'REGISTER',
-                          textAlign: TextAlign.center,
+                      GestureDetector(
+                        onTap:() {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => const Register()
+                            ),
+                          );
+                        },
+                        child: Container(
+                          decoration: const BoxDecoration(
+                              color:Colors.blue,
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(25)
+                              )
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 15,
+                            horizontal: 45,
+                          ),
+                          child: const Text(
+                            'REGISTER',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.white
+                            ),
+                          ),
                         ),
                       ),
+
                       Container(
                         decoration:  BoxDecoration(
                           border: Border.all(
