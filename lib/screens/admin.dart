@@ -246,6 +246,106 @@ class _AdminPageState extends State<AdminPage> {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-            onPressed: () {}, child: const Icon(Icons.add)));
+            onPressed: () {
+              showDialogWithFields();
+            },
+            child: const Icon(Icons.add)));
+  }
+
+  void showDialogWithFields() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            scrollable: true,
+            title: Column(
+              children: [
+                Image.asset(
+                  'assets/images/heart_logo.png',
+                  width: 60,
+                  height: 60,
+                  fit: BoxFit.contain,
+                ),
+                const Text(
+                  'Create User',
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+            content: Padding(
+              padding: const EdgeInsets.all(0.0),
+              child: Form(
+                child: Column(
+                  children: <Widget>[
+                    Row(children: <Widget>[
+                      SizedBox(
+                        width: 120,
+                        child: TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'First Name',
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      SizedBox(
+                        width: 120,
+                        child: TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'Last Name',
+                          ),
+                        ),
+                      ),
+                    ]),
+                    Row(children: <Widget>[
+                      SizedBox(
+                        width: 120,
+                        child: TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'Email',
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      SizedBox(
+                        width: 120,
+                        child: TextFormField(
+                          decoration: const InputDecoration(
+                            labelText: 'Phone No.',
+                          ),
+                        ),
+                      ),
+                    ]),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Department',
+                      ),
+                    ),
+                    TextFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Organization',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Send'),
+              ),
+            ],
+          );
+        });
   }
 }
