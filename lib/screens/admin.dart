@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:heart_registration_app/widgets/dropdown.dart';
 
 class AdminPage extends StatefulWidget {
   const AdminPage({super.key});
@@ -321,13 +322,27 @@ class _AdminPageState extends State<AdminPage> {
                     ]),
                     TextFormField(
                       decoration: const InputDecoration(
-                        labelText: 'Department',
-                      ),
-                    ),
-                    TextFormField(
-                      decoration: const InputDecoration(
                         labelText: 'Organization',
                       ),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 8.0),
+                          child: Text('Department',
+                              style: TextStyle(
+                                color: Color.fromARGB(255, 119, 119, 119),
+                              )),
+                        ),
+                        SizedBox(width: 300, child: DropDown()),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 19,
                     ),
                   ],
                 ),
@@ -342,7 +357,7 @@ class _AdminPageState extends State<AdminPage> {
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text('Send'),
+                child: const Text('Add User'),
               ),
             ],
           );
