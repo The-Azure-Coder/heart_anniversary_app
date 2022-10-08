@@ -157,7 +157,7 @@ class _Login extends State<Login>{
                       ),
                       padding: const EdgeInsets.symmetric(
                         vertical: 15,
-                        horizontal: 140,
+                        horizontal: 155,
                       ),
                       child: const Text(
                         'LOGIN',
