@@ -4,7 +4,7 @@ import 'home.dart';
 import 'guest_list.dart';
 import 'package:http/http.dart' as http;
 import 'package:heart_registration_app/models/user.dart';
-
+import '../services/secure_store.dart';
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -22,6 +22,8 @@ class _Login extends State<Login>{
   Future<bool> submitForm(String email, String password) async{
     Map userData = await this._user.login(email, password);
     if(userData["status"] == 200){
+      SecureStore.storeToken("jwt-auth", userData["data"]["token"]);
+      SecureStore.createUser(userData["data"]["user"]);
       return true;
     }
     setState(() {
@@ -101,7 +103,7 @@ class _Login extends State<Login>{
                     ),
                     Container(
                       padding:const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                      child: Text(this.error, style: TextStyle(color: Colors.red),)
+                      child: Text(error, style: TextStyle(color: Colors.red),)
                     ),
                     SizedBox(
                         width:350,
@@ -121,8 +123,9 @@ class _Login extends State<Login>{
                           child:TextField(
                             keyboardType: TextInputType.emailAddress,
                             onChanged: (value){
-                              error = "";
+
                               setState(() {
+                                error = "";
                                 email = value;
                               });
                             },
@@ -163,6 +166,7 @@ class _Login extends State<Login>{
                             obscureText: true,
                             onChanged: (value){
                               setState(() {
+                                error = "";
                                 password = value;
                               });
                             },
