@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:heart_registration_app/services/network_handler.dart';
 import 'Registration.dart';
 import 'home.dart';
 import 'guest_list.dart';
@@ -17,10 +20,9 @@ class _Login extends State<Login>{
   String password = '';
   String email = '';
   String error = '';
-  User _user = new User();
 
   Future<bool> submitForm(String email, String password) async{
-    Map userData = await this._user.login(email, password);
+    Map userData = jsonDecode(await NetworkHandler.post("/authenticate",{"email": email, "password": password}));
     if(userData["status"] == 200){
       SecureStore.storeToken("jwt-auth", userData["data"]["token"]);
       SecureStore.createUser(userData["data"]["user"]);
@@ -216,63 +218,12 @@ class _Login extends State<Login>{
                         ),
                       ),
                     ),
-                    // Container(
-                    //
-                    //   decoration: const BoxDecoration(
-                    //       color:Colors.blue,
-                    //       borderRadius: BorderRadius.all(
-                    //           Radius.circular(10)
-                    //       )
-                    //   ),
-                    //   padding: const EdgeInsets.symmetric(
-                    //     vertical: 15,
-                    //     horizontal: 155,
-                    //   ),
-                    //   child: const Text(
-                    //     'LOGIN',
-                    //     style: TextStyle(
-                    //         color: Colors.white
-                    //     ),
-                    //     textAlign: TextAlign.center,
-                    //   ),
-                    // ),
+
                     const Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 10
                         )
                     ),
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: [
-                    //     const Text(
-                    //       "Don't have an account?",
-                    //       style: TextStyle(
-                    //           color: Colors.white,
-                    //           fontStyle: FontStyle.italic
-                    //       ),
-                    //     ),
-                    //     const Padding(
-                    //         padding: EdgeInsets.symmetric(
-                    //             horizontal: 5
-                    //         )
-                    //     ),
-                    //     GestureDetector(
-                    //       onTap:() {
-                    //         Navigator.of(context).push(
-                    //           MaterialPageRoute(
-                    //               builder: (context) => const Register()
-                    //           ),
-                    //         );
-                    //       },
-                    //       child: const Text(
-                    //         'Register',
-                    //         style: TextStyle(
-                    //             color: Colors.blue
-                    //         ),
-                    //       ),
-                    //     )
-                    //   ],
-                    // ),
                     const Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 20

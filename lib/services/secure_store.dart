@@ -18,12 +18,15 @@ class SecureStore{
   static void createUser(Map userdata){
     json.encode(userdata);
     storeToken("user", jsonEncode(userdata));
-
   }
   static Future<Map> getUser() async{
     var userData = await getToken("user");
     Map user = jsonDecode(userData!);
     return user;
+  }
+
+  static logout() async {
+    await storage.deleteAll();
   }
 
 }
