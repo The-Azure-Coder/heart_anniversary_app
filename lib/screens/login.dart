@@ -166,68 +166,40 @@ class _Login extends State<Login> {
                                       TextStyle(color: Colors.grey.shade400)),
                             ),
                           )),
-                      const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 15)),
-                      Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 0, horizontal: 15.0),
-                          child: SizedBox(
-                            width: 280,
-                            child: TextButton(
-                              onPressed: () async {
-                                String usertype =
-                                    await submitForm(email, password);
-                                if (usertype != "NULL") {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const GuestList()),
-                                  );
-                                }
-                              },
-                              style: TextButton.styleFrom(
-                                backgroundColor: Colors.blue,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                minimumSize: const Size.fromHeight(50.0),
-                              ),
-                              child: const Text(
-                                'LOGIN',
-                                style: TextStyle(color: Colors.white),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          )),
+                      const Padding(padding: EdgeInsets.symmetric(vertical: 5)),
                       const Padding(
                           padding: EdgeInsets.symmetric(vertical: 10)),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 0, horizontal: 15.0),
-                        child: TextButton(
-                          onPressed: () async {
-                            String usertype = await submitForm(email, password);
-                            if (usertype != "NULL") {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => (usertype == "ADMIN")
-                                      ? const AdminPage()
-                                      : const GuestList(),
-                                ),
-                              );
-                            }
-                          },
-                          style: TextButton.styleFrom(
-                            backgroundColor: Colors.blue,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                        child: SizedBox(
+                          width: 280,
+                          child: TextButton(
+                            onPressed: () async {
+                              String usertype =
+                                  await submitForm(email, password);
+                              if (usertype != "NULL") {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => (usertype == "ADMIN")
+                                        ? const AdminPage()
+                                        : const GuestList(),
+                                  ),
+                                );
+                              }
+                            },
+                            style: TextButton.styleFrom(
+                              backgroundColor: Colors.blue,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              minimumSize: const Size.fromHeight(50.0),
                             ),
-                            minimumSize: const Size.fromHeight(50.0),
-                          ),
-                          child: const Text(
-                            'LOGIN',
-                            style: TextStyle(color: Colors.white),
-                            textAlign: TextAlign.center,
+                            child: const Text(
+                              'LOGIN',
+                              style: TextStyle(color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
                       ),
