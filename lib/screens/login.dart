@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'Registration.dart';
+import 'home.dart';
+import 'guest_list.dart';
+import 'package:http/http.dart' as http;
+import 'package:heart_registration_app/models/user.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -9,6 +13,23 @@ class Login extends StatefulWidget {
 }
 
 class _Login extends State<Login>{
+
+  String password = '';
+  String email = '';
+  String error = '';
+  User _user = new User();
+
+  Future<bool> submitForm(String email, String password) async{
+    Map userData = await this._user.login(email, password);
+    if(userData["status"] == 200){
+      return true;
+    }
+    setState(() {
+      error = userData["error"];
+    });
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,6 +99,10 @@ class _Login extends State<Login>{
                             vertical: 10
                         )
                     ),
+                    Container(
+                      padding:const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      child: Text(this.error, style: TextStyle(color: Colors.red),)
+                    ),
                     SizedBox(
                         width:350,
                         child:Container(
@@ -95,6 +120,12 @@ class _Login extends State<Login>{
                           ),
                           child:TextField(
                             keyboardType: TextInputType.emailAddress,
+                            onChanged: (value){
+                              error = "";
+                              setState(() {
+                                email = value;
+                              });
+                            },
                             decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.only(
                                     left: 15
@@ -129,13 +160,18 @@ class _Login extends State<Login>{
                             color: Colors.white,
                           ),
                           child:TextField(
-                            keyboardType: TextInputType.number,
+                            obscureText: true,
+                            onChanged: (value){
+                              setState(() {
+                                password = value;
+                              });
+                            },
                             decoration: InputDecoration(
                                 contentPadding: const EdgeInsets.only(
                                     left: 15
                                 ),
                                 border: InputBorder.none,
-                                hintText: 'Department',
+                                hintText: 'Password',
                                 hintStyle: TextStyle(
                                     color: Colors.grey.shade400
                                 )
@@ -148,62 +184,91 @@ class _Login extends State<Login>{
                             vertical: 10
                         )
                     ),
-                    Container(
-                      decoration: const BoxDecoration(
-                          color:Colors.blue,
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(10)
-                          )
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 15,
-                        horizontal: 155,
-                      ),
-                      child: const Text(
-                        'LOGIN',
-                        style: TextStyle(
-                            color: Colors.white
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15.0),
+                      child: TextButton(
+                        onPressed: () async{
+                          if( await submitForm(email, password)){
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => const GuestList()
+                               ),
+                            );
+              }
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          minimumSize: Size.fromHeight(50.0),
                         ),
-                        textAlign: TextAlign.center,
+                        child: const Text(
+                          'LOGIN',
+                          style: TextStyle(
+                              color: Colors.white
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
+                    // Container(
+                    //
+                    //   decoration: const BoxDecoration(
+                    //       color:Colors.blue,
+                    //       borderRadius: BorderRadius.all(
+                    //           Radius.circular(10)
+                    //       )
+                    //   ),
+                    //   padding: const EdgeInsets.symmetric(
+                    //     vertical: 15,
+                    //     horizontal: 155,
+                    //   ),
+                    //   child: const Text(
+                    //     'LOGIN',
+                    //     style: TextStyle(
+                    //         color: Colors.white
+                    //     ),
+                    //     textAlign: TextAlign.center,
+                    //   ),
+                    // ),
                     const Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 10
                         )
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          "Don't have an account?",
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontStyle: FontStyle.italic
-                          ),
-                        ),
-                        const Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 5
-                            )
-                        ),
-                        GestureDetector(
-                          onTap:() {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => const Register()
-                              ),
-                            );
-                          },
-                          child: const Text(
-                            'Register',
-                            style: TextStyle(
-                                color: Colors.blue
-                            ),
-                          ),
-                        )
-                      ],
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     const Text(
+                    //       "Don't have an account?",
+                    //       style: TextStyle(
+                    //           color: Colors.white,
+                    //           fontStyle: FontStyle.italic
+                    //       ),
+                    //     ),
+                    //     const Padding(
+                    //         padding: EdgeInsets.symmetric(
+                    //             horizontal: 5
+                    //         )
+                    //     ),
+                    //     GestureDetector(
+                    //       onTap:() {
+                    //         Navigator.of(context).push(
+                    //           MaterialPageRoute(
+                    //               builder: (context) => const Register()
+                    //           ),
+                    //         );
+                    //       },
+                    //       child: const Text(
+                    //         'Register',
+                    //         style: TextStyle(
+                    //             color: Colors.blue
+                    //         ),
+                    //       ),
+                    //     )
+                    //   ],
+                    // ),
                     const Padding(
                         padding: EdgeInsets.symmetric(
                             vertical: 20
