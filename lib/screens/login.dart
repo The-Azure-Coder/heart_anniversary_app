@@ -18,10 +18,10 @@ class _Login extends State<Login> {
   String email = '';
   String error = '';
 
-
-  Future<String> submitForm(String email, String password) async{
-    Map userData = jsonDecode(await NetworkHandler.post("/authenticate",{"email": email, "password": password}));
-    if(userData["status"] == 200) {
+  Future<String> submitForm(String email, String password) async {
+    Map userData = jsonDecode(await NetworkHandler.post(
+        "/authenticate", {"email": email, "password": password}));
+    if (userData["status"] == 200) {
       SecureStore.storeToken("jwt-auth", userData["data"]["token"]);
       SecureStore.createUser(userData["data"]["user"]);
       print(userData["data"]["user"]["isSuperAdmin"]);
@@ -169,67 +169,66 @@ class _Login extends State<Login> {
                       const Padding(
                           padding: EdgeInsets.symmetric(vertical: 15)),
                       Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 0, horizontal: 15.0),
+                          child: SizedBox(
+                            width: 280,
+                            child: TextButton(
+                              onPressed: () async {
+                                String usertype =
+                                    await submitForm(email, password);
+                                if (usertype != "NULL") {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const GuestList()),
+                                  );
+                                }
+                              },
+                              style: TextButton.styleFrom(
+                                backgroundColor: Colors.blue,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                minimumSize: const Size.fromHeight(50.0),
+                              ),
+                              child: const Text(
+                                'LOGIN',
+                                style: TextStyle(color: Colors.white),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          )),
+                      const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 10)),
+                      Padding(
                         padding: const EdgeInsets.symmetric(
                             vertical: 0, horizontal: 15.0),
-                        child: SizedBox(
-                          width: 280,
-                          child: TextButton(
-                            onPressed: () async {
-                              if (await submitForm(email, password)) {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                      builder: (context) => const GuestList()),
-                                );
-                              }
-                            },
-                            style: TextButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              minimumSize: const Size.fromHeight(50.0),
+                        child: TextButton(
+                          onPressed: () async {
+                            String usertype = await submitForm(email, password);
+                            if (usertype != "NULL") {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => (usertype == "ADMIN")
+                                      ? const AdminPage()
+                                      : const GuestList(),
+                                ),
+                              );
+                            }
+                          },
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.blue,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            child: const Text(
-                              'LOGIN',
-                              style: TextStyle(color: Colors.white),
-                              textAlign: TextAlign.center,
-                            ),
+                            minimumSize: const Size.fromHeight(50.0),
                           ),
-
-                        )
-                    ),
-                    const Padding(
-                        padding: EdgeInsets.symmetric(
-                            vertical: 10
-                        )
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15.0),
-                      child: TextButton(
-                        onPressed: () async{
-                          String usertype = await submitForm(email, password);
-                          if( usertype != "NULL"){
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                  builder: (context) => (usertype == "ADMIN") ? AdminPage() : GuestList(),
-                               ),
-                            );
-              }
-                        },
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                          child: const Text(
+                            'LOGIN',
+                            style: TextStyle(color: Colors.white),
+                            textAlign: TextAlign.center,
                           ),
-                          minimumSize: Size.fromHeight(50.0),
-                        ),
-                        child: const Text(
-                          'LOGIN',
-                          style: TextStyle(
-                              color: Colors.white
-                          ),
-                          textAlign: TextAlign.center,
-
                         ),
                       ),
                       const Padding(
