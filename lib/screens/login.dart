@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:heart_registration_app/screens/admin.dart';
 import 'package:heart_registration_app/services/network_handler.dart';
 import 'Registration.dart';
 import 'home.dart';
@@ -21,17 +22,22 @@ class _Login extends State<Login>{
   String email = '';
   String error = '';
 
-  Future<bool> submitForm(String email, String password) async{
+  Future<String> submitForm(String email, String password) async{
     Map userData = jsonDecode(await NetworkHandler.post("/authenticate",{"email": email, "password": password}));
-    if(userData["status"] == 200){
+    if(userData["status"] == 200) {
       SecureStore.storeToken("jwt-auth", userData["data"]["token"]);
       SecureStore.createUser(userData["data"]["user"]);
-      return true;
+      print(userData["data"]["user"]["isSuperAdmin"]);
+      if (userData["data"]["user"]["isSuperAdmin"]) {
+        return "ADMIN";
+      } else {
+        return "USER";
+      }
     }
     setState(() {
       error = userData["error"];
     });
-    return false;
+    return "NULL";
   }
 
   @override
@@ -194,10 +200,11 @@ class _Login extends State<Login>{
                       padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15.0),
                       child: TextButton(
                         onPressed: () async{
-                          if( await submitForm(email, password)){
+                          String usertype = await submitForm(email, password);
+                          if( usertype != "NULL"){
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                  builder: (context) => const GuestList()
+                                  builder: (context) => (usertype == "ADMIN") ? AdminPage() : GuestList(),
                                ),
                             );
               }
