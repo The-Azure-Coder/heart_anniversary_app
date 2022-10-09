@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'login.dart';
 import '../widgets/department_reg_dropDown.dart';
 
 class Register extends StatefulWidget {
@@ -17,12 +16,16 @@ class _Register extends State<Register> {
           alignment: Alignment.center,
           decoration: const BoxDecoration(
               image: DecorationImage(
-                  image: AssetImage('assets/images/blur_login background.jpg'),
+                  image:
+                      AssetImage('assets/images/blur_login_Background_V2.jpg'),
                   fit: BoxFit.cover)),
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const SizedBox(
+                  height: 120,
+                ),
                 Container(
                   decoration: BoxDecoration(
                     boxShadow: [
@@ -35,13 +38,13 @@ class _Register extends State<Register> {
                     borderRadius: const BorderRadius.all(Radius.circular(20)),
                     color: Colors.white.withOpacity(0.6),
                   ),
-                  width: 380,
+                  width: 370,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.asset(
                         'assets/images/heart_logo.png',
-                        height: 120,
+                        height: 100,
                       ),
                       Container(
                           margin: const EdgeInsets.only(bottom: 20),
@@ -217,35 +220,27 @@ class _Register extends State<Register> {
                       ),
                       const Padding(
                           padding: EdgeInsets.symmetric(vertical: 10)),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Already have an account?',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontStyle: FontStyle.italic),
-                          ),
-                          const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 5)),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => const Login()),
-                              );
-                            },
-                            child: const Text(
-                              'Login',
-                              style: TextStyle(color: Colors.blue),
-                            ),
-                          )
-                        ],
-                      ),
                       const Padding(
                           padding: EdgeInsets.symmetric(vertical: 20)),
                     ],
                   ),
+                ),
+                const SizedBox(
+                  height: 60,
+                ),
+                const Text(
+                  'Designed by:',
+                  style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600),
+                ),
+                const Text(
+                  'AMBERHEART Institute of Coding -Cohort 2',
+                  style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600),
                 )
               ],
             ),
