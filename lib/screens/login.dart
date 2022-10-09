@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:heart_registration_app/screens/admin.dart';
 import 'package:heart_registration_app/services/network_handler.dart';
 import 'guest_list.dart';
 import '../services/secure_store.dart';
@@ -17,18 +18,23 @@ class _Login extends State<Login> {
   String email = '';
   String error = '';
 
-  Future<bool> submitForm(String email, String password) async {
-    Map userData = jsonDecode(await NetworkHandler.post(
-        "/authenticate", {"email": email, "password": password}));
-    if (userData["status"] == 200) {
+
+  Future<String> submitForm(String email, String password) async{
+    Map userData = jsonDecode(await NetworkHandler.post("/authenticate",{"email": email, "password": password}));
+    if(userData["status"] == 200) {
       SecureStore.storeToken("jwt-auth", userData["data"]["token"]);
       SecureStore.createUser(userData["data"]["user"]);
-      return true;
+      print(userData["data"]["user"]["isSuperAdmin"]);
+      if (userData["data"]["user"]["isSuperAdmin"]) {
+        return "ADMIN";
+      } else {
+        return "USER";
+      }
     }
     setState(() {
       error = userData["error"];
     });
-    return false;
+    return "NULL";
   }
 
   @override
@@ -189,6 +195,41 @@ class _Login extends State<Login> {
                               textAlign: TextAlign.center,
                             ),
                           ),
+
+                        )
+                    ),
+                    const Padding(
+                        padding: EdgeInsets.symmetric(
+                            vertical: 10
+                        )
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0, horizontal: 15.0),
+                      child: TextButton(
+                        onPressed: () async{
+                          String usertype = await submitForm(email, password);
+                          if( usertype != "NULL"){
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                  builder: (context) => (usertype == "ADMIN") ? AdminPage() : GuestList(),
+                               ),
+                            );
+              }
+                        },
+                        style: TextButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          minimumSize: Size.fromHeight(50.0),
+                        ),
+                        child: const Text(
+                          'LOGIN',
+                          style: TextStyle(
+                              color: Colors.white
+                          ),
+                          textAlign: TextAlign.center,
+
                         ),
                       ),
                       const Padding(

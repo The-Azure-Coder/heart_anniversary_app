@@ -26,10 +26,7 @@ class _MyhomePage extends State<HomePage> {
               child:Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.asset(
-                    'assets/images/heart_logo.png',
-                    height: 120,
-                  ),
+
                   const Text(
                       'CELEBRATING',
                     style: TextStyle(
@@ -39,50 +36,18 @@ class _MyhomePage extends State<HomePage> {
                     ),
                   ),
                   Image.asset(
-                    'assets/images/forty.png',
-                    height: 180,
+                    'assets/images/HEART-Logo-40th.png',
+                    height: 140,
                   ),
-                  Column(
-                    children:  [
-                      const Text(
-                          'YEARS',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 30,
-                          letterSpacing: 2
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                  Image.asset(
+                    'assets/images/stars.png',
+                    height: 120,
+                  ),
 
-                        children: const [
-                          Text(
-                              'of',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                          Padding(
-                              padding: EdgeInsets.only(
-                                left: 3
-                            )
-                          ),
-                          Text(
-                              'Heart',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 23
-                            )
-                          )
-                        ],
-                      )
-                    ],
-                  ),
                   const Padding(
                       padding: EdgeInsets.symmetric(
-                    vertical: 10,
-                    horizontal: 100,
+                    vertical: 30,
+                    horizontal:110,
                     ),
                       child:Text(
                           '4 decades of Providing Hope for a Nation',
@@ -93,42 +58,10 @@ class _MyhomePage extends State<HomePage> {
                         textAlign: TextAlign.center,
                       )
                   ),
-                  const Padding(padding: EdgeInsets.only(
-                      top: 30
-                    )
-                  ),
                   Row(
                     //THIS ROW HOLDS THE BUTTONS THAT WILL LEAD TO REGISTRATION OR LOGIN
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      GestureDetector(
-                        onTap:() {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                                builder: (context) => const Register()
-                            ),
-                          );
-                        },
-                        child: Container(
-                          decoration: const BoxDecoration(
-                              color:Colors.blue,
-                              borderRadius: BorderRadius.all(
-                                  Radius.circular(25)
-                              )
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 15,
-                            horizontal: 45,
-                          ),
-                          child: const Text(
-                            'REGISTER',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.white
-                            ),
-                          ),
-                        ),
-                      ),
                       GestureDetector(
                         onTap:() {
                           Navigator.of(context).push(
@@ -138,27 +71,47 @@ class _MyhomePage extends State<HomePage> {
                           );
                         },
                         child: Container(
-                          decoration:  BoxDecoration(
-                            border: Border.all(
-                              color: Colors.blue
-                            ),
-                            borderRadius: const BorderRadius.all(
+                          decoration: const BoxDecoration(
+                            color: Colors.blue,
+                            borderRadius:  BorderRadius.all(
                                 Radius.circular(25)
                             )
                           ),
                           padding: const EdgeInsets.symmetric(
                             vertical: 15,
-                            horizontal: 45,
+                            horizontal: 100,
                           ),
                           child: const Text(
                             'LOGIN',
                             style: TextStyle(
-                              color: Colors.blue
+                              color: Colors.white
                             ),
                           ),
                         )
                       )
                     ],
+                  ),
+                  Padding(
+                      padding: EdgeInsets.only(
+                        top: 60
+                      ),
+                    child: Text(
+                        'Designed by:',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontStyle: FontStyle.italic,
+                        fontWeight: FontWeight.w500
+                      ),
+                    ),
+                  ),
+                  Padding(padding: EdgeInsets.only(top: 15)),
+                  Text(
+                      'AMBERHEART institute of Coding - Cohort 2',
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w300
+                      )
                   )
                 ],
               )
