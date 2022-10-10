@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:heart_registration_app/widgets/admin_drawer.dart';
 import 'package:heart_registration_app/widgets/dropdown.dart';
 import 'dart:convert';
 import 'package:heart_registration_app/services/network_handler.dart';
@@ -19,11 +20,13 @@ class _AdminPageState extends State<AdminPage> {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     return Scaffold(
+        drawer: const AdminDrawer(),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         backgroundColor: Colors.white,
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(190),
+          preferredSize: const Size.fromHeight(160),
           child: AppBar(
+            titleSpacing: 0,
             elevation: 0.0,
             title: const Text(
               'Admin Pannel',
@@ -45,7 +48,7 @@ class _AdminPageState extends State<AdminPage> {
               children: [
                 Container(
                   alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.only(top: 140, left: 20),
+                  margin: const EdgeInsets.only(top: 100, left: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
@@ -74,7 +77,7 @@ class _AdminPageState extends State<AdminPage> {
         body: ListView(
           children: [
             const Padding(
-              padding: EdgeInsets.only(top: 10, bottom: 10, left: 5),
+              padding: EdgeInsets.only(top: 10, bottom: 10, left: 11),
               child: Text(
                 'Dashboard',
                 style:
@@ -82,12 +85,13 @@ class _AdminPageState extends State<AdminPage> {
               ),
             ),
             Wrap(
+              alignment: WrapAlignment.center,
               children: const [
                 SizedBox(
-                  width: 130,
+                  width: 122,
                   child: Card(
                     child: ListTile(
-                      horizontalTitleGap: 10,
+                      horizontalTitleGap: 8,
                       leading: CircleAvatar(
                         backgroundColor: Colors.blue,
                         child: Icon(
@@ -107,10 +111,10 @@ class _AdminPageState extends State<AdminPage> {
                   ),
                 ),
                 SizedBox(
-                  width: 130,
+                  width: 122,
                   child: Card(
                     child: ListTile(
-                      horizontalTitleGap: 10,
+                      horizontalTitleGap: 8,
                       leading: CircleAvatar(
                         backgroundColor: Color.fromARGB(255, 250, 81, 137),
                         child: Icon(
@@ -130,10 +134,10 @@ class _AdminPageState extends State<AdminPage> {
                   ),
                 ),
                 SizedBox(
-                  width: 130,
+                  width: 120,
                   child: Card(
                     child: ListTile(
-                      horizontalTitleGap: 10,
+                      horizontalTitleGap: 8,
                       leading: CircleAvatar(
                         backgroundColor: Color.fromARGB(255, 11, 247, 232),
                         child: Icon(
@@ -197,12 +201,25 @@ class _AdminPageState extends State<AdminPage> {
               padding: const EdgeInsets.all(7),
               child: Stack(
                 children: [
-                  const Card(
+                  Card(
                     child: ListTile(
-                      title: Text('Moris Miller'),
-                      subtitle: Text('Montego Bay, Food & Beverage'),
-                      trailing: Icon(Icons.more_vert),
-                    ),
+                        title: const Text('Moris Miller'),
+                        subtitle: const Text('Montego Bay, Food & Beverage'),
+                        trailing: PopupMenuButton(
+                          itemBuilder: (context) {
+                            return [
+                              const PopupMenuItem(
+                                value: 'edit',
+                                child: Text('Edit'),
+                              ),
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: Text('Delete'),
+                              )
+                            ];
+                          },
+                          onSelected: (String value) {},
+                        )),
                   ),
                   Container(
                     color: const Color.fromARGB(255, 255, 59, 222),
@@ -216,12 +233,26 @@ class _AdminPageState extends State<AdminPage> {
               padding: const EdgeInsets.all(7),
               child: Stack(
                 children: [
-                  const Card(
+                  Card(
                     child: ListTile(
-                      title: Text('Shseen Cameron'),
-                      subtitle: Text('Clarendon, Amber institue of coding'),
-                      trailing: Icon(Icons.more_vert),
-                    ),
+                        title: const Text('Shseen Cameron'),
+                        subtitle:
+                            const Text('Clarendon, Amber institue of coding'),
+                        trailing: PopupMenuButton(
+                          itemBuilder: (context) {
+                            return [
+                              const PopupMenuItem(
+                                value: 'edit',
+                                child: Text('Edit'),
+                              ),
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: Text('Delete'),
+                              )
+                            ];
+                          },
+                          onSelected: (String value) {},
+                        )),
                   ),
                   Container(
                     color: const Color.fromARGB(255, 230, 252, 28),
@@ -235,12 +266,26 @@ class _AdminPageState extends State<AdminPage> {
               padding: const EdgeInsets.all(7),
               child: Stack(
                 children: [
-                  const Card(
+                  Card(
                     child: ListTile(
-                      title: Text('Tyrese Morgan'),
-                      subtitle: Text('Stony hill, Amber institue of coding'),
-                      trailing: Icon(Icons.more_vert),
-                    ),
+                        title: const Text('Tyrese Morgan'),
+                        subtitle:
+                            const Text('Stony hill, Amber institue of coding'),
+                        trailing: PopupMenuButton(
+                          itemBuilder: (context) {
+                            return [
+                              const PopupMenuItem(
+                                value: 'edit',
+                                child: Text('Edit'),
+                              ),
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: Text('Delete'),
+                              )
+                            ];
+                          },
+                          onSelected: (String value) {},
+                        )),
                   ),
                   Container(
                     color: const Color.fromARGB(255, 0, 160, 141),
@@ -294,7 +339,7 @@ class _AdminPageState extends State<AdminPage> {
                         ),
                       ),
                       const SizedBox(
-                        width: 20,
+                        width: 15,
                       ),
                       SizedBox(
                         width: 120,
@@ -315,7 +360,7 @@ class _AdminPageState extends State<AdminPage> {
                         ),
                       ),
                       const SizedBox(
-                        width: 20,
+                        width: 15,
                       ),
                       SizedBox(
                         width: 120,
