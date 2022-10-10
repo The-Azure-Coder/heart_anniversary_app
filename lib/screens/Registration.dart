@@ -1,4 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:heart_registration_app/services/network_handler.dart';
+import 'login.dart';
 import '../widgets/department_reg_dropDown.dart';
 
 class Register extends StatefulWidget {
@@ -9,6 +12,35 @@ class Register extends StatefulWidget {
 }
 
 class _Register extends State<Register> {
+  String first_name='';
+  String last_name ='';
+  String email_address='';
+  String phone_number ='';
+  //defaulted to test until dropdown issue is resolved
+  String department ="6341594525e3e385fa19bd50";
+  String error='';
+
+  Future<bool> register(String first_name, String last_name, String email_address, String phone_number, String department) async{
+    //check if login
+    print('Login in user');
+    print(first_name);
+    print(last_name);
+    print(email_address);
+    print(phone_number);
+    Map registerStatus = jsonDecode(await NetworkHandler.post("/registrants", {"first_name":first_name,"last_name":last_name,"email_address":email_address,"phoneNumber":phone_number, "department":department}));
+
+    if(registerStatus["status"] == 201)
+      {
+        print("User created");
+        print(registerStatus);
+        return true;
+      }
+    setState(() {
+      error =registerStatus["error"];
+    });
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,6 +107,13 @@ class _Register extends State<Register> {
                                   color: Colors.white,
                                 ),
                                 child: TextField(
+                                  keyboardType: TextInputType.name,
+                                  onChanged: (value){
+                                    setState(() {
+                                      error="";
+                                      first_name= value;
+                                    });
+                                  },
                                   decoration: InputDecoration(
                                       contentPadding:
                                           const EdgeInsets.only(left: 15),
@@ -100,6 +139,13 @@ class _Register extends State<Register> {
                                   color: Colors.white,
                                 ),
                                 child: TextField(
+                                  keyboardType: TextInputType.name,
+                                  onChanged: (value){
+                                    setState(() {
+                                      error="";
+                                      last_name= value;
+                                    });
+                                  },
                                   decoration: InputDecoration(
                                       contentPadding:
                                           const EdgeInsets.only(left: 15),
@@ -133,6 +179,12 @@ class _Register extends State<Register> {
                                 ),
                                 child: TextField(
                                   keyboardType: TextInputType.emailAddress,
+                                  onChanged: (value){
+                                    setState(() {
+                                      error="";
+                                      email_address= value;
+                                    });
+                                  },
                                   decoration: InputDecoration(
                                       contentPadding:
                                           const EdgeInsets.only(left: 15),
@@ -158,12 +210,20 @@ class _Register extends State<Register> {
                                   color: Colors.white,
                                 ),
                                 child: TextField(
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.name,
+                                  onChanged: (value){
+                                    setState(() {
+                                      error="";
+                                      phone_number= value;
+                                    });
+                                  },
+
+
                                   decoration: InputDecoration(
                                       contentPadding:
                                           const EdgeInsets.only(left: 15),
                                       border: InputBorder.none,
-                                      hintText: 'Phone NO.',
+                                      hintText: 'Phone No.',
                                       hintStyle: TextStyle(
                                           color: Colors.grey.shade400)),
                                 ),
@@ -200,6 +260,7 @@ class _Register extends State<Register> {
                           )),
                       const Padding(
                           padding: EdgeInsets.symmetric(vertical: 10)),
+                      //someone needs to get the value this is presenting for integration of the for submit
                       const DropDown(),
                       const Padding(
                           padding: EdgeInsets.symmetric(vertical: 10)),
@@ -212,10 +273,20 @@ class _Register extends State<Register> {
                           vertical: 15,
                           horizontal: 140,
                         ),
-                        child: const Text(
-                          'REGISTER',
-                          style: TextStyle(color: Colors.white),
-                          textAlign: TextAlign.center,
+                        child: TextButton(
+                          onPressed: () async {
+                            if (await register(first_name, last_name, email_address, phone_number,department)){
+                              Navigator.of(context).pop(
+                                MaterialPageRoute(
+                                    builder: (context)=> const Login() ),
+                              );
+                            }
+                          },
+                          child: const Text(
+                            'REGISTER',
+                            style: TextStyle(color: Colors.white),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
                       const Padding(
