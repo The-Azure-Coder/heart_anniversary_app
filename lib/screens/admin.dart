@@ -18,7 +18,7 @@ class _AdminPageState extends State<AdminPage> {
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         backgroundColor: Colors.white,
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(190),
+          preferredSize: const Size.fromHeight(160),
           child: AppBar(
             titleSpacing: 0,
             elevation: 0.0,
@@ -42,7 +42,7 @@ class _AdminPageState extends State<AdminPage> {
               children: [
                 Container(
                   alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.only(top: 140, left: 20),
+                  margin: const EdgeInsets.only(top: 100, left: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
@@ -71,7 +71,7 @@ class _AdminPageState extends State<AdminPage> {
         body: ListView(
           children: [
             const Padding(
-              padding: EdgeInsets.only(top: 10, bottom: 10, left: 5),
+              padding: EdgeInsets.only(top: 10, bottom: 10, left: 11),
               child: Text(
                 'Dashboard',
                 style:
@@ -79,12 +79,13 @@ class _AdminPageState extends State<AdminPage> {
               ),
             ),
             Wrap(
+              alignment: WrapAlignment.center,
               children: const [
                 SizedBox(
-                  width: 130,
+                  width: 122,
                   child: Card(
                     child: ListTile(
-                      horizontalTitleGap: 10,
+                      horizontalTitleGap: 8,
                       leading: CircleAvatar(
                         backgroundColor: Colors.blue,
                         child: Icon(
@@ -104,10 +105,10 @@ class _AdminPageState extends State<AdminPage> {
                   ),
                 ),
                 SizedBox(
-                  width: 130,
+                  width: 122,
                   child: Card(
                     child: ListTile(
-                      horizontalTitleGap: 10,
+                      horizontalTitleGap: 8,
                       leading: CircleAvatar(
                         backgroundColor: Color.fromARGB(255, 250, 81, 137),
                         child: Icon(
@@ -127,10 +128,10 @@ class _AdminPageState extends State<AdminPage> {
                   ),
                 ),
                 SizedBox(
-                  width: 130,
+                  width: 120,
                   child: Card(
                     child: ListTile(
-                      horizontalTitleGap: 10,
+                      horizontalTitleGap: 8,
                       leading: CircleAvatar(
                         backgroundColor: Color.fromARGB(255, 11, 247, 232),
                         child: Icon(
@@ -332,7 +333,7 @@ class _AdminPageState extends State<AdminPage> {
                         ),
                       ),
                       const SizedBox(
-                        width: 20,
+                        width: 15,
                       ),
                       SizedBox(
                         width: 120,
@@ -353,7 +354,7 @@ class _AdminPageState extends State<AdminPage> {
                         ),
                       ),
                       const SizedBox(
-                        width: 20,
+                        width: 15,
                       ),
                       SizedBox(
                         width: 120,

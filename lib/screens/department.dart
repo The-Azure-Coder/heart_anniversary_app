@@ -18,7 +18,7 @@ class _DepartmentPageState extends State<DepartmentPage> {
         backgroundColor: Colors.white,
         drawer: const AdminDrawer(),
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(190),
+          preferredSize: const Size.fromHeight(160),
           child: AppBar(
             titleSpacing: 0,
             elevation: 0.0,
@@ -42,7 +42,7 @@ class _DepartmentPageState extends State<DepartmentPage> {
               children: [
                 Container(
                   alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.only(top: 140, left: 20),
+                  margin: const EdgeInsets.only(top: 100, left: 20),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
