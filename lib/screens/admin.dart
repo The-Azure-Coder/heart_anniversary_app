@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:heart_registration_app/widgets/admin_drawer.dart';
 import 'package:heart_registration_app/widgets/dropdown.dart';
 
 class AdminPage extends StatefulWidget {
@@ -13,11 +14,13 @@ class _AdminPageState extends State<AdminPage> {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     return Scaffold(
+        drawer: const AdminDrawer(),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         backgroundColor: Colors.white,
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(190),
           child: AppBar(
+            titleSpacing: 0,
             elevation: 0.0,
             title: const Text(
               'Admin Pannel',
@@ -191,12 +194,25 @@ class _AdminPageState extends State<AdminPage> {
               padding: const EdgeInsets.all(7),
               child: Stack(
                 children: [
-                  const Card(
+                  Card(
                     child: ListTile(
-                      title: Text('Moris Miller'),
-                      subtitle: Text('Montego Bay, Food & Beverage'),
-                      trailing: Icon(Icons.more_vert),
-                    ),
+                        title: const Text('Moris Miller'),
+                        subtitle: const Text('Montego Bay, Food & Beverage'),
+                        trailing: PopupMenuButton(
+                          itemBuilder: (context) {
+                            return [
+                              const PopupMenuItem(
+                                value: 'edit',
+                                child: Text('Edit'),
+                              ),
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: Text('Delete'),
+                              )
+                            ];
+                          },
+                          onSelected: (String value) {},
+                        )),
                   ),
                   Container(
                     color: const Color.fromARGB(255, 255, 59, 222),
@@ -210,12 +226,26 @@ class _AdminPageState extends State<AdminPage> {
               padding: const EdgeInsets.all(7),
               child: Stack(
                 children: [
-                  const Card(
+                  Card(
                     child: ListTile(
-                      title: Text('Shseen Cameron'),
-                      subtitle: Text('Clarendon, Amber institue of coding'),
-                      trailing: Icon(Icons.more_vert),
-                    ),
+                        title: const Text('Shseen Cameron'),
+                        subtitle:
+                            const Text('Clarendon, Amber institue of coding'),
+                        trailing: PopupMenuButton(
+                          itemBuilder: (context) {
+                            return [
+                              const PopupMenuItem(
+                                value: 'edit',
+                                child: Text('Edit'),
+                              ),
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: Text('Delete'),
+                              )
+                            ];
+                          },
+                          onSelected: (String value) {},
+                        )),
                   ),
                   Container(
                     color: const Color.fromARGB(255, 230, 252, 28),
@@ -229,12 +259,26 @@ class _AdminPageState extends State<AdminPage> {
               padding: const EdgeInsets.all(7),
               child: Stack(
                 children: [
-                  const Card(
+                  Card(
                     child: ListTile(
-                      title: Text('Tyrese Morgan'),
-                      subtitle: Text('Stony hill, Amber institue of coding'),
-                      trailing: Icon(Icons.more_vert),
-                    ),
+                        title: const Text('Tyrese Morgan'),
+                        subtitle:
+                            const Text('Stony hill, Amber institue of coding'),
+                        trailing: PopupMenuButton(
+                          itemBuilder: (context) {
+                            return [
+                              const PopupMenuItem(
+                                value: 'edit',
+                                child: Text('Edit'),
+                              ),
+                              const PopupMenuItem(
+                                value: 'delete',
+                                child: Text('Delete'),
+                              )
+                            ];
+                          },
+                          onSelected: (String value) {},
+                        )),
                   ),
                   Container(
                     color: const Color.fromARGB(255, 0, 160, 141),
