@@ -102,10 +102,25 @@ class _AdminPageState extends State<AdminPage> {
         context, MaterialPageRoute(builder: (context) => const Login()));
   }
 
+  void deleteUser({String userID = ''}) async {
+    try {
+      final response = await NetworkHandler.delete('/users/$userID');
+      final jsonData = jsonDecode(response)['data'];
+      print(userID);
+      print(response);
+      print('deleted successfully');
+
+      setState(() {});
+    } catch (err) {}
+  }
+
+  void editUser(Map<String, dynamic> user) async {
+    showDialogWithFields(user: user);
+  }
+
   @override
   void initState() {
     super.initState();
-    getRegistrants();
     getUsers();
     getdepartments();
     getRegistrants();
@@ -300,7 +315,7 @@ class _AdminPageState extends State<AdminPage> {
               physics: const ScrollPhysics(),
               itemCount: _usersList.length,
               itemBuilder: (context, i) {
-                final registrant = _usersList[i];
+                final user = _usersList[i];
                 return Column(
                   children: [
                     Container(
@@ -309,18 +324,25 @@ class _AdminPageState extends State<AdminPage> {
                         children: [
                           Card(
                             child: ListTile(
-                                title: Text("${registrant['fname']}"),
-                                subtitle: Text("${registrant['department']}"),
+                                title: Text("${user['fname']}"),
+                                subtitle: Text("${user['department']['name']}"),
                                 trailing: PopupMenuButton(
                                   itemBuilder: (context) {
                                     return [
-                                      const PopupMenuItem(
+                                      PopupMenuItem(
                                         value: 'edit',
-                                        child: Text('Edit'),
+                                        child: TextButton(
+                                            onPressed: () {},
+                                            child: const Text('Edit')),
                                       ),
-                                      const PopupMenuItem(
+                                      PopupMenuItem(
                                         value: 'delete',
-                                        child: Text('Delete'),
+                                        child: TextButton(
+                                            onPressed: () {
+                                              deleteUser(userID: user['_id']);
+                                              getUsers();
+                                            },
+                                            child: const Text('Delete')),
                                       )
                                     ];
                                   },
@@ -348,7 +370,7 @@ class _AdminPageState extends State<AdminPage> {
             child: const Icon(Icons.add)));
   }
 
-  void showDialogWithFields() {
+  void showDialogWithFields({Map<String, dynamic> user = const {}}) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -378,6 +400,7 @@ class _AdminPageState extends State<AdminPage> {
                         width: 120,
                         child: TextFormField(
                           keyboardType: TextInputType.name,
+                          initialValue: (user['fname']) ? user["fname"] : "",
                           onChanged: (value) {
                             setState(() {
                               error = "";
@@ -477,7 +500,7 @@ class _AdminPageState extends State<AdminPage> {
                       fname, lname, email, password, department)) {
                     print('here');
                     Navigator.pop(context);
-                    getRegistrants();
+                    getUsers();
                   }
                 },
                 child: const Text('Add User'),
