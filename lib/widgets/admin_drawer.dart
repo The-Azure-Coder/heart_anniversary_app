@@ -68,7 +68,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
             ListTile(
               leading: const Icon(Icons.business),
               title: const Text(
-                ' Organizations ',
+                'Registrants ',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
               onTap: () {
