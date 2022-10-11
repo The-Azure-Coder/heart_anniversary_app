@@ -102,10 +102,24 @@ class _AdminPageState extends State<AdminPage> {
         context, MaterialPageRoute(builder: (context) => const Login()));
   }
 
+  void deleteUser({String userID = ''}) async {
+    try {
+      final response = await NetworkHandler.delete('/users/$userID');
+      print('deleted successfully');
+      _registrantsList.retainWhere((user) => user['id'] == userID);
+      setState(() {});
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  void editUser(Map<String, dynamic> user) async {
+    showDialogWithFields(user: user);
+  }
+
   @override
   void initState() {
     super.initState();
-    getRegistrants();
     getUsers();
     getdepartments();
   }
@@ -299,7 +313,7 @@ class _AdminPageState extends State<AdminPage> {
               physics: const ScrollPhysics(),
               itemCount: _usersList.length,
               itemBuilder: (context, i) {
-                final registrant = _usersList[i];
+                final user = _usersList[i];
                 return Column(
                   children: [
                     Container(
@@ -308,18 +322,27 @@ class _AdminPageState extends State<AdminPage> {
                         children: [
                           Card(
                             child: ListTile(
-                                title: Text("${registrant['fname']}"),
-                                subtitle: Text("${registrant['department']}"),
+                                title: Text("${user['fname']}"),
+                                subtitle: (user['department'] != null) ? Text("${user['department']['name']}") : Text("Admin") ,
                                 trailing: PopupMenuButton(
                                   itemBuilder: (context) {
                                     return [
-                                      const PopupMenuItem(
+                                      PopupMenuItem(
                                         value: 'edit',
-                                        child: Text('Edit'),
+                                        child: TextButton(
+                                            onPressed: () {
+                                              editUser(user);
+                                            },
+                                            child: const Text('Edit')),
                                       ),
-                                      const PopupMenuItem(
+                                      PopupMenuItem(
                                         value: 'delete',
-                                        child: Text('Delete'),
+                                        child: TextButton(
+                                            onPressed: () {
+                                              deleteUser(userID: user['_id']);
+                                              getUsers();
+                                            },
+                                            child: const Text('Delete')),
                                       )
                                     ];
                                   },
@@ -347,7 +370,7 @@ class _AdminPageState extends State<AdminPage> {
             child: const Icon(Icons.add)));
   }
 
-  void showDialogWithFields() {
+  void showDialogWithFields({Map<String, dynamic> user = const {}}) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -377,6 +400,7 @@ class _AdminPageState extends State<AdminPage> {
                         width: 120,
                         child: TextFormField(
                           keyboardType: TextInputType.name,
+                          initialValue: findAltText(model: user, fieldName: "fname",altText: " "),
                           onChanged: (value) {
                             setState(() {
                               error = "";
@@ -395,6 +419,7 @@ class _AdminPageState extends State<AdminPage> {
                         width: 120,
                         child: TextFormField(
                           keyboardType: TextInputType.name,
+                          initialValue: findAltText(model: user, fieldName: "lname",altText: " "),
                           onChanged: (value) {
                             setState(() {
                               error = "";
@@ -412,6 +437,7 @@ class _AdminPageState extends State<AdminPage> {
                         width: 120,
                         child: TextFormField(
                           keyboardType: TextInputType.emailAddress,
+                          initialValue: findAltText(model: user, fieldName: "email",altText: " "),
                           onChanged: (value) {
                             setState(() {
                               error = "";
@@ -447,7 +473,7 @@ class _AdminPageState extends State<AdminPage> {
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Padding(
                           padding: EdgeInsets.only(bottom: 8.0),
                           child: Text('Department',
@@ -455,7 +481,7 @@ class _AdminPageState extends State<AdminPage> {
                                 color: Color.fromARGB(255, 119, 119, 119),
                               )),
                         ),
-                        SizedBox(width: 300, child: DropDown()),
+                        SizedBox(width: 300, child: DropDown(list: _departList)),
                       ],
                     ),
                     const SizedBox(
@@ -476,7 +502,7 @@ class _AdminPageState extends State<AdminPage> {
                       fname, lname, email, password, department)) {
                     print('here');
                     Navigator.pop(context);
-                    getRegistrants();
+                    getUsers();
                   }
                 },
                 child: const Text('Add User'),
@@ -485,4 +511,12 @@ class _AdminPageState extends State<AdminPage> {
           );
         });
   }
+}
+
+
+
+String findAltText({Map<String, dynamic>model= const {},String fieldName= "", String altText= "Alt Text"}){
+  if(model[fieldName] == null){
+    return altText;
+  }return model[fieldName];
 }
