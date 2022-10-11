@@ -59,7 +59,6 @@ class NetworkHandler {
       host: "heart40.herokuapp.com",
       path: "/api/v1$segment",
       // queryParameters: queryParams
-      query: "don=donna",
     );
 
     return uri;
