@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:heart_registration_app/screens/guest_list.dart';
+import 'package:heart_registration_app/screens/login.dart';
 import 'package:heart_registration_app/services/network_handler.dart';
+import 'package:heart_registration_app/services/secure_store.dart';
 import 'package:heart_registration_app/widgets/admin_drawer.dart';
 import 'package:heart_registration_app/widgets/dropdown.dart';
 
@@ -14,33 +15,41 @@ class AdminPage extends StatefulWidget {
 }
 
 class _AdminPageState extends State<AdminPage> {
-  String first_name = '';
-  String last_name = '';
-  String email_address = '';
-  String phone_number = '';
-  String organization = '';
+  var _usersList = [];
+  var _registrantsList = [];
+  var _departList = [];
+  int userCount = 0;
+  int regCount = 0;
+  int deptCount = 0;
+  String fname = '';
+  String lname = '';
+  String email = '';
+  String password = '';
   //defaulted to test until dropdown issue is resolved
   String department = "6341594525e3e385fa19bd50";
   String error = '';
-  Future<bool> register(String firstName, String lastName, String emailAddress,
-      String phoneNumber, String department, String organization) async {
+  Future<bool> register(String fname, String lname, String email,
+      String password, String department) async {
     //check if login
-    print(firstName);
-    print(lastName);
-    print(emailAddress);
-    print(phoneNumber);
+    print(fname);
+    print(lname);
+    print(email);
+    print(password);
     print(department);
-    print(organization);
 
-    Map registerStatus = jsonDecode(await NetworkHandler.post("/registrants", {
-      "first_name": firstName,
-      "last_name": lastName,
-      "email_address": emailAddress,
-      "phoneNumber": phoneNumber,
+    Map registerStatus = jsonDecode(await NetworkHandler.post("/users", {
+      "fname": fname,
+      "lname": lname,
+      "email": email,
+      "password": password,
       "department": department,
-      "organization": organization,
     }));
     print(registerStatus);
+    if (registerStatus["status"] == 201) {
+      print("User created");
+      print(registerStatus);
+      return true;
+    }
 
     setState(() {
       error = registerStatus["error"];
@@ -48,23 +57,57 @@ class _AdminPageState extends State<AdminPage> {
     return false;
   }
 
-  var _registrantsList = [];
+  void getUsers() async {
+    try {
+      final response = await NetworkHandler.get(endpoint: '/users');
+      final jsonData = jsonDecode(response)['data'];
+      print(response);
+
+      setState(() {
+        _usersList = jsonData;
+        userCount = _usersList.length;
+      });
+    } catch (err) {}
+  }
+
   void getRegistrants() async {
-    final url = await NetworkHandler.get(endpoint: '/registrants');
     try {
       final response = await NetworkHandler.get(endpoint: '/registrants');
       final jsonData = jsonDecode(response)['data'];
-      print(jsonData);
+      print(response);
 
       setState(() {
         _registrantsList = jsonData;
+        regCount = _registrantsList.length;
       });
     } catch (err) {}
+  }
+
+  void getdepartments() async {
+    try {
+      final response = await NetworkHandler.get(endpoint: '/departments');
+      final jsonData = jsonDecode(response)['data'];
+      print(response);
+
+      setState(() {
+        _departList = jsonData;
+        deptCount = _departList.length;
+      });
+    } catch (err) {}
+  }
+
+  void logOut() {
+    SecureStore.logout();
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => const Login()));
   }
 
   @override
   void initState() {
     super.initState();
+    getRegistrants();
+    getUsers();
+    getdepartments();
     getRegistrants();
   }
 
@@ -87,7 +130,7 @@ class _AdminPageState extends State<AdminPage> {
             actions: [
               TextButton(
                 onPressed: () {
-                  Navigator.pop(context);
+                  logOut();
                 },
                 child: const Text('Log Out',
                     style: TextStyle(
@@ -138,13 +181,13 @@ class _AdminPageState extends State<AdminPage> {
             ),
             Wrap(
               alignment: WrapAlignment.center,
-              children: const [
+              children: [
                 SizedBox(
                   width: 122,
                   child: Card(
                     child: ListTile(
                       horizontalTitleGap: 8,
-                      leading: CircleAvatar(
+                      leading: const CircleAvatar(
                         backgroundColor: Colors.blue,
                         child: Icon(
                           Icons.people,
@@ -152,13 +195,13 @@ class _AdminPageState extends State<AdminPage> {
                         ),
                       ),
                       title: Text(
-                        '130',
-                        style: TextStyle(
+                        '$userCount',
+                        style: const TextStyle(
                           fontWeight: FontWeight.w600,
                           color: Colors.blue,
                         ),
                       ),
-                      subtitle: Text('Users'),
+                      subtitle: const Text('Users'),
                     ),
                   ),
                 ),
@@ -167,7 +210,7 @@ class _AdminPageState extends State<AdminPage> {
                   child: Card(
                     child: ListTile(
                       horizontalTitleGap: 8,
-                      leading: CircleAvatar(
+                      leading: const CircleAvatar(
                         backgroundColor: Color.fromARGB(255, 250, 81, 137),
                         child: Icon(
                           Icons.business_center,
@@ -175,22 +218,22 @@ class _AdminPageState extends State<AdminPage> {
                         ),
                       ),
                       title: Text(
-                        '12',
-                        style: TextStyle(
+                        '$deptCount',
+                        style: const TextStyle(
                           fontWeight: FontWeight.w600,
                           color: Color.fromARGB(255, 250, 81, 137),
                         ),
                       ),
-                      subtitle: Text('Depts'),
+                      subtitle: const Text('Depts'),
                     ),
                   ),
                 ),
                 SizedBox(
-                  width: 120,
+                  width: 128,
                   child: Card(
                     child: ListTile(
                       horizontalTitleGap: 8,
-                      leading: CircleAvatar(
+                      leading: const CircleAvatar(
                         backgroundColor: Color.fromARGB(255, 11, 247, 232),
                         child: Icon(
                           Icons.business,
@@ -198,17 +241,17 @@ class _AdminPageState extends State<AdminPage> {
                         ),
                       ),
                       title: Text(
-                        '8',
-                        style: TextStyle(
+                        '$regCount',
+                        style: const TextStyle(
                           fontWeight: FontWeight.w600,
                           color: Color.fromARGB(255, 11, 247, 232),
                         ),
                       ),
-                      subtitle: Text('Orgs'),
+                      subtitle: const Text('regs'),
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 12,
                 ),
               ],
@@ -255,9 +298,9 @@ class _AdminPageState extends State<AdminPage> {
             ListView.builder(
               shrinkWrap: true,
               physics: const ScrollPhysics(),
-              itemCount: _registrantsList.length,
+              itemCount: _usersList.length,
               itemBuilder: (context, i) {
-                final registrant = _registrantsList[i];
+                final registrant = _usersList[i];
                 return Column(
                   children: [
                     Container(
@@ -266,7 +309,7 @@ class _AdminPageState extends State<AdminPage> {
                         children: [
                           Card(
                             child: ListTile(
-                                title: Text("${registrant['first_name']}"),
+                                title: Text("${registrant['fname']}"),
                                 subtitle: Text("${registrant['department']}"),
                                 trailing: PopupMenuButton(
                                   itemBuilder: (context) {
@@ -338,7 +381,7 @@ class _AdminPageState extends State<AdminPage> {
                           onChanged: (value) {
                             setState(() {
                               error = "";
-                              first_name = value;
+                              fname = value;
                             });
                           },
                           decoration: const InputDecoration(
@@ -356,7 +399,7 @@ class _AdminPageState extends State<AdminPage> {
                           onChanged: (value) {
                             setState(() {
                               error = "";
-                              last_name = value;
+                              lname = value;
                             });
                           },
                           decoration: const InputDecoration(
@@ -373,7 +416,7 @@ class _AdminPageState extends State<AdminPage> {
                           onChanged: (value) {
                             setState(() {
                               error = "";
-                              email_address = value;
+                              email = value;
                             });
                           },
                           decoration: const InputDecoration(
@@ -387,31 +430,19 @@ class _AdminPageState extends State<AdminPage> {
                       SizedBox(
                         width: 120,
                         child: TextFormField(
-                          keyboardType: TextInputType.name,
+                          obscureText: true,
                           onChanged: (value) {
                             setState(() {
                               error = "";
-                              phone_number = value;
+                              password = value;
                             });
                           },
                           decoration: const InputDecoration(
-                            labelText: 'Phone No.',
+                            labelText: 'Password',
                           ),
                         ),
                       ),
                     ]),
-                    TextFormField(
-                      keyboardType: TextInputType.name,
-                      onChanged: (value) {
-                        setState(() {
-                          error = "";
-                          organization = value;
-                        });
-                      },
-                      decoration: const InputDecoration(
-                        labelText: 'Organization',
-                      ),
-                    ),
                     const SizedBox(
                       height: 15,
                     ),
@@ -442,10 +473,11 @@ class _AdminPageState extends State<AdminPage> {
               ),
               TextButton(
                 onPressed: () async {
-                  if (await register(first_name, last_name, email_address,
-                      phone_number, department, organization)) {
-                    Navigator.of(context).pop(MaterialPageRoute(
-                        builder: (context) => const AdminPage()));
+                  if (await register(
+                      fname, lname, email, password, department)) {
+                    print('here');
+                    Navigator.pop(context);
+                    getRegistrants();
                   }
                 },
                 child: const Text('Add User'),

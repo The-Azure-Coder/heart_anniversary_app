@@ -279,6 +279,8 @@ class _Register extends State<Register> {
                         ),
                         child: TextButton(
                           onPressed: () async {
+                            print(await register(first_name, last_name,
+                                email_address, phone_number, department));
                             if (await register(first_name, last_name,
                                 email_address, phone_number, department)) {
                               Navigator.of(context).pop(
