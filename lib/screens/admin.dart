@@ -325,7 +325,7 @@ class _AdminPageState extends State<AdminPage> {
                           Card(
                             child: ListTile(
                                 title: Text("${user['fname']}"),
-                                subtitle: Text("${user['department']['name']}"),
+                                subtitle: (user['department'] != null) ? Text("${user['department']['name']}") : Text("Admin") ,
                                 trailing: PopupMenuButton(
                                   itemBuilder: (context) {
                                     return [
