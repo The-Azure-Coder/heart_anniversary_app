@@ -18,7 +18,11 @@ class NetworkHandler {
 
   static Future<String> post(String endpoint, var body) async {
     var response = await client.post(buildUrl(segment: endpoint),
-        body: jsonEncode(body), headers: {"Content-type": "application/json"});
+        body: jsonEncode(body),
+        headers: {
+          "Content-type": "application/json",
+          "Authorization": "Bearer $token"
+        });
     return response.body;
   }
 

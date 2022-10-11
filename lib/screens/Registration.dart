@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:heart_registration_app/screens/guest_list.dart';
 import 'package:heart_registration_app/services/network_handler.dart';
 import 'login.dart';
 import '../widgets/department_reg_dropDown.dart';
@@ -16,24 +17,27 @@ class _Register extends State<Register> {
   String last_name = '';
   String email_address = '';
   String phone_number = '';
+  String organization = '';
   //defaulted to test until dropdown issue is resolved
   String department = "6341594525e3e385fa19bd50";
   String error = '';
 
   Future<bool> register(String firstName, String lastName, String emailAddress,
-      String phoneNumber, String department) async {
+      String phoneNumber, String department, String organization) async {
     //check if login
     print('Login in user');
     print(firstName);
     print(lastName);
     print(emailAddress);
     print(phoneNumber);
+    print(organization);
     Map registerStatus = jsonDecode(await NetworkHandler.post("/registrants", {
       "first_name": firstName,
       "last_name": lastName,
       "email_address": emailAddress,
       "phoneNumber": phoneNumber,
-      "department": department
+      "department": department,
+      "organization": organization
     }));
 
     if (registerStatus["status"] == 201) {
@@ -252,6 +256,12 @@ class _Register extends State<Register> {
                               color: Colors.white,
                             ),
                             child: TextField(
+                              onChanged: (value) {
+                                setState(() {
+                                  error = "";
+                                  organization = value;
+                                });
+                              },
                               keyboardType: TextInputType.text,
                               decoration: InputDecoration(
                                   contentPadding:
@@ -279,14 +289,14 @@ class _Register extends State<Register> {
                         ),
                         child: TextButton(
                           onPressed: () async {
-                            print(await register(first_name, last_name,
-                                email_address, phone_number, department));
-                            if (await register(first_name, last_name,
-                                email_address, phone_number, department)) {
-                              Navigator.of(context).pop(
-                                MaterialPageRoute(
-                                    builder: (context) => const Login()),
-                              );
+                            if (await register(
+                                first_name,
+                                last_name,
+                                email_address,
+                                phone_number,
+                                department,
+                                organization)) {
+                              Navigator.pop(context);
                             }
                           },
                           child: const Text(

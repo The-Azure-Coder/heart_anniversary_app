@@ -108,7 +108,6 @@ class _AdminPageState extends State<AdminPage> {
     getRegistrants();
     getUsers();
     getdepartments();
-    getRegistrants();
   }
 
   @override

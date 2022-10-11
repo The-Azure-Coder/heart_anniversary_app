@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:heart_registration_app/screens/Registration.dart';
+import 'package:heart_registration_app/services/network_handler.dart';
+
+import '../services/secure_store.dart';
 
 class GuestList extends StatefulWidget {
   const GuestList({super.key});
@@ -9,6 +14,57 @@ class GuestList extends StatefulWidget {
 }
 
 class _GuestListState extends State<GuestList> {
+  var _registrantsList = [];
+  int regCount = 0;
+  String first_name = '';
+  String last_name = '';
+  String email_address = '';
+  String phone = '';
+  // defaulted to test until dropdown issue is resolved
+  String department = "6341594525e3e385fa19bd50";
+  String organization = '';
+  String registration_number = '';
+
+  String error = '';
+
+  void getRegistrants() async {
+    try {
+      final response = await NetworkHandler.get(endpoint: '/registrants');
+      final jsonData = jsonDecode(response)['data'];
+      print(response);
+
+      setState(() {
+        _registrantsList = jsonData;
+        regCount = _registrantsList.length;
+      });
+    } catch (err) {}
+  }
+
+  void generateCertificate({String registrant = ""}) async {
+    try {
+      var user = await SecureStore.getUser();
+
+      final response = await NetworkHandler.post('/participants', {
+        "demonstrator": user["_id"],
+        "department": user["department"],
+        "registrant": registrant
+      });
+      final jsonData = jsonDecode(response)['data'];
+      print(response);
+
+      setState(() {
+        _registrantsList = jsonData;
+        regCount = _registrantsList.length;
+      });
+    } catch (err) {}
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getRegistrants();
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
@@ -115,60 +171,58 @@ class _GuestListState extends State<GuestList> {
                 )
               ],
             ),
-            Container(
-              margin: const EdgeInsets.only(bottom: 8, top: 8),
-              child: Stack(
-                children: [
-                  const Card(
-                    child: ListTile(
-                      title: Text('Moris Miller'),
-                      subtitle: Text('Montego Bay, Food & Beverage'),
-                    ),
-                  ),
-                  Container(
-                    color: const Color.fromARGB(255, 255, 59, 222),
-                    height: 77,
-                    width: 10,
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(bottom: 8, top: 8),
-              child: Stack(
-                children: [
-                  const Card(
-                    child: ListTile(
-                      title: Text('Shseen Cameron'),
-                      subtitle: Text('Clarendon, Amber institue of coding'),
-                    ),
-                  ),
-                  Container(
-                    color: const Color.fromARGB(255, 230, 252, 28),
-                    height: 77,
-                    width: 10,
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(bottom: 8, top: 8),
-              child: Stack(
-                children: [
-                  const Card(
-                    child: ListTile(
-                      title: Text('Tyrese Morgan'),
-                      subtitle: Text('Stony hill, Amber institue of coding'),
-                    ),
-                  ),
-                  Container(
-                    color: const Color.fromARGB(255, 0, 160, 141),
-                    height: 77,
-                    width: 10,
-                  ),
-                ],
-              ),
-            ),
+            ListView.builder(
+                shrinkWrap: true,
+                physics: const ScrollPhysics(),
+                itemCount: _registrantsList.length,
+                itemBuilder: (context, i) {
+                  final registrant = _registrantsList[i];
+                  return Column(children: [
+                    Card(
+                        child: ListTile(
+                      title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                                style: const TextStyle(
+                                  fontSize: 18.0,
+                                ),
+                                "${registrant['first_name']}, ${registrant['last_name']}"),
+                            Text(
+                              "Reg #: ${registrant['registration_number']}",
+                              style: const TextStyle(
+                                fontSize: 14.0,
+                                fontStyle: FontStyle.italic,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ]),
+                      subtitle: Text(
+                          "${registrant['organization']}, ${registrant['department']['name']}"),
+                      trailing: PopupMenuButton(
+                        itemBuilder: (context) {
+                          return [
+                            const PopupMenuItem(
+                              value: 'edit',
+                              child: Text('Edit'),
+                            ),
+                            const PopupMenuItem(
+                              value: 'delete',
+                              child: Text('Delete'),
+                            ),
+                            const PopupMenuItem(
+                              value: 'generate certificate',
+                              child: Text('Generate Certificate'),
+                            ),
+                          ];
+                        },
+                        onSelected: (value) {
+                          generateCertificate(registrant: registrant["_id"]);
+                        },
+                      ),
+                    )),
+                  ]);
+                })
           ],
         ),
         floatingActionButton: FloatingActionButton(
@@ -176,7 +230,7 @@ class _GuestListState extends State<GuestList> {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const Register()),
-              );
+              ).then((value) => getRegistrants());
             },
             child: const Icon(Icons.add)));
   }
