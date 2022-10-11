@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:heart_registration_app/screens/guest_list.dart';
+import 'package:heart_registration_app/services/network_handler.dart';
 import 'package:heart_registration_app/widgets/admin_drawer.dart';
 import 'package:heart_registration_app/widgets/dropdown.dart';
 
@@ -10,6 +14,60 @@ class AdminPage extends StatefulWidget {
 }
 
 class _AdminPageState extends State<AdminPage> {
+  String first_name = '';
+  String last_name = '';
+  String email_address = '';
+  String phone_number = '';
+  String organization = '';
+  //defaulted to test until dropdown issue is resolved
+  String department = "6341594525e3e385fa19bd50";
+  String error = '';
+  Future<bool> register(String firstName, String lastName, String emailAddress,
+      String phoneNumber, String department, String organization) async {
+    //check if login
+    print(firstName);
+    print(lastName);
+    print(emailAddress);
+    print(phoneNumber);
+    print(department);
+    print(organization);
+
+    Map registerStatus = jsonDecode(await NetworkHandler.post("/registrants", {
+      "first_name": firstName,
+      "last_name": lastName,
+      "email_address": emailAddress,
+      "phoneNumber": phoneNumber,
+      "department": department,
+      "organization": organization,
+    }));
+    print(registerStatus);
+
+    setState(() {
+      error = registerStatus["error"];
+    });
+    return false;
+  }
+
+  var _registrantsList = [];
+  void getRegistrants() async {
+    final url = await NetworkHandler.get(endpoint: '/registrants');
+    try {
+      final response = await NetworkHandler.get(endpoint: '/registrants');
+      final jsonData = jsonDecode(response)['data'];
+      print(jsonData);
+
+      setState(() {
+        _registrantsList = jsonData;
+      });
+    } catch (err) {}
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getRegistrants();
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
@@ -71,7 +129,7 @@ class _AdminPageState extends State<AdminPage> {
         body: ListView(
           children: [
             const Padding(
-              padding: EdgeInsets.only(top: 10, bottom: 10, left: 11),
+              padding: EdgeInsets.only(top: 10, bottom: 6, left: 11),
               child: Text(
                 'Dashboard',
                 style:
@@ -150,10 +208,13 @@ class _AdminPageState extends State<AdminPage> {
                     ),
                   ),
                 ),
+                SizedBox(
+                  height: 12,
+                ),
               ],
             ),
             const SizedBox(
-              height: 12,
+              height: 15,
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -191,103 +252,49 @@ class _AdminPageState extends State<AdminPage> {
                 ],
               ),
             ),
-            Container(
-              padding: const EdgeInsets.all(7),
-              child: Stack(
-                children: [
-                  Card(
-                    child: ListTile(
-                        title: const Text('Moris Miller'),
-                        subtitle: const Text('Montego Bay, Food & Beverage'),
-                        trailing: PopupMenuButton(
-                          itemBuilder: (context) {
-                            return [
-                              const PopupMenuItem(
-                                value: 'edit',
-                                child: Text('Edit'),
-                              ),
-                              const PopupMenuItem(
-                                value: 'delete',
-                                child: Text('Delete'),
-                              )
-                            ];
-                          },
-                          onSelected: (String value) {},
-                        )),
-                  ),
-                  Container(
-                    color: const Color.fromARGB(255, 255, 59, 222),
-                    height: 77,
-                    width: 10,
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(7),
-              child: Stack(
-                children: [
-                  Card(
-                    child: ListTile(
-                        title: const Text('Shseen Cameron'),
-                        subtitle:
-                            const Text('Clarendon, Amber institue of coding'),
-                        trailing: PopupMenuButton(
-                          itemBuilder: (context) {
-                            return [
-                              const PopupMenuItem(
-                                value: 'edit',
-                                child: Text('Edit'),
-                              ),
-                              const PopupMenuItem(
-                                value: 'delete',
-                                child: Text('Delete'),
-                              )
-                            ];
-                          },
-                          onSelected: (String value) {},
-                        )),
-                  ),
-                  Container(
-                    color: const Color.fromARGB(255, 230, 252, 28),
-                    height: 77,
-                    width: 10,
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.all(7),
-              child: Stack(
-                children: [
-                  Card(
-                    child: ListTile(
-                        title: const Text('Tyrese Morgan'),
-                        subtitle:
-                            const Text('Stony hill, Amber institue of coding'),
-                        trailing: PopupMenuButton(
-                          itemBuilder: (context) {
-                            return [
-                              const PopupMenuItem(
-                                value: 'edit',
-                                child: Text('Edit'),
-                              ),
-                              const PopupMenuItem(
-                                value: 'delete',
-                                child: Text('Delete'),
-                              )
-                            ];
-                          },
-                          onSelected: (String value) {},
-                        )),
-                  ),
-                  Container(
-                    color: const Color.fromARGB(255, 0, 160, 141),
-                    height: 77,
-                    width: 10,
-                  ),
-                ],
-              ),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const ScrollPhysics(),
+              itemCount: _registrantsList.length,
+              itemBuilder: (context, i) {
+                final registrant = _registrantsList[i];
+                return Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(7),
+                      child: Stack(
+                        children: [
+                          Card(
+                            child: ListTile(
+                                title: Text("${registrant['first_name']}"),
+                                subtitle: Text("${registrant['department']}"),
+                                trailing: PopupMenuButton(
+                                  itemBuilder: (context) {
+                                    return [
+                                      const PopupMenuItem(
+                                        value: 'edit',
+                                        child: Text('Edit'),
+                                      ),
+                                      const PopupMenuItem(
+                                        value: 'delete',
+                                        child: Text('Delete'),
+                                      )
+                                    ];
+                                  },
+                                  onSelected: (String value) {},
+                                )),
+                          ),
+                          Container(
+                            color: const Color.fromARGB(255, 255, 59, 222),
+                            height: 77,
+                            width: 10,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ],
         ),
@@ -327,6 +334,13 @@ class _AdminPageState extends State<AdminPage> {
                       SizedBox(
                         width: 120,
                         child: TextFormField(
+                          keyboardType: TextInputType.name,
+                          onChanged: (value) {
+                            setState(() {
+                              error = "";
+                              first_name = value;
+                            });
+                          },
                           decoration: const InputDecoration(
                             labelText: 'First Name',
                           ),
@@ -338,6 +352,13 @@ class _AdminPageState extends State<AdminPage> {
                       SizedBox(
                         width: 120,
                         child: TextFormField(
+                          keyboardType: TextInputType.name,
+                          onChanged: (value) {
+                            setState(() {
+                              error = "";
+                              last_name = value;
+                            });
+                          },
                           decoration: const InputDecoration(
                             labelText: 'Last Name',
                           ),
@@ -348,6 +369,13 @@ class _AdminPageState extends State<AdminPage> {
                       SizedBox(
                         width: 120,
                         child: TextFormField(
+                          keyboardType: TextInputType.emailAddress,
+                          onChanged: (value) {
+                            setState(() {
+                              error = "";
+                              email_address = value;
+                            });
+                          },
                           decoration: const InputDecoration(
                             labelText: 'Email',
                           ),
@@ -359,6 +387,13 @@ class _AdminPageState extends State<AdminPage> {
                       SizedBox(
                         width: 120,
                         child: TextFormField(
+                          keyboardType: TextInputType.name,
+                          onChanged: (value) {
+                            setState(() {
+                              error = "";
+                              phone_number = value;
+                            });
+                          },
                           decoration: const InputDecoration(
                             labelText: 'Phone No.',
                           ),
@@ -366,6 +401,13 @@ class _AdminPageState extends State<AdminPage> {
                       ),
                     ]),
                     TextFormField(
+                      keyboardType: TextInputType.name,
+                      onChanged: (value) {
+                        setState(() {
+                          error = "";
+                          organization = value;
+                        });
+                      },
                       decoration: const InputDecoration(
                         labelText: 'Organization',
                       ),
@@ -399,8 +441,12 @@ class _AdminPageState extends State<AdminPage> {
                 child: const Text('Cancel'),
               ),
               TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
+                onPressed: () async {
+                  if (await register(first_name, last_name, email_address,
+                      phone_number, department, organization)) {
+                    Navigator.of(context).pop(MaterialPageRoute(
+                        builder: (context) => const AdminPage()));
+                  }
                 },
                 child: const Text('Add User'),
               ),
