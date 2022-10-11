@@ -17,8 +17,13 @@ class NetworkHandler {
   static final client = http.Client();
 
   static Future<String> post(String endpoint, var body) async {
+    token = await getToken();
     var response = await client.post(buildUrl(segment: endpoint),
-        body: jsonEncode(body), headers: {"Content-type": "application/json"});
+        body: jsonEncode(body),
+        headers: {
+          "Content-type": "application/json",
+          "Authorization": "Bearer $token"
+        });
     return response.body;
   }
 
