@@ -19,8 +19,10 @@ class _Login extends State<Login> {
   String error = '';
 
   Future<String> submitForm(String email, String password) async {
-    Map userData = jsonDecode(await NetworkHandler.post(
-        "/authenticate", {"email": email, "password": password}));
+    String response = await NetworkHandler.post(
+        "/authenticate", {"email": email, "password": password});
+    print(response);
+    Map userData = jsonDecode(response);
     if (userData["status"] == 200) {
       SecureStore.storeToken("jwt-auth", userData["data"]["token"]);
       SecureStore.createUser(userData["data"]["user"]);
