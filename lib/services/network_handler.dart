@@ -52,7 +52,7 @@ class NetworkHandler{
   static buildUrl({String segment ="", queryParams = const {}}){
     Uri uri = Uri(
       scheme: "https",
-      host: "heart-registration-app.vercel.app",
+      host: "heart40.herokuapp.com",
       path: "/api/v1$segment",
       // queryParameters: queryParams
       query: "don=donna",
