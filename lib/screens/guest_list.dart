@@ -5,6 +5,7 @@ import 'package:heart_registration_app/screens/Registration.dart';
 import 'package:heart_registration_app/services/network_handler.dart';
 
 import '../services/secure_store.dart';
+import 'package:draggable_fab/draggable_fab.dart';
 
 class GuestList extends StatefulWidget {
   const GuestList({super.key});
@@ -59,6 +60,23 @@ class _GuestListState extends State<GuestList> {
     } catch (err) {}
   }
 
+  void editRegistrant({Map<String, dynamic> registrant = const {}}) async {
+    showRegistrantFields(registrant: registrant);
+  }
+
+  void deleteRegistrant({String registrantID = ''}) async {
+    try {
+      final response =
+          await NetworkHandler.delete('/registrants/$registrantID');
+      final jsonData = jsonDecode(response)['data'];
+      print(registrantID);
+      print(response);
+      print('deleted sucessfully');
+
+      setState(() {});
+    } catch (err) {}
+  }
+
   @override
   void initState() {
     super.initState();
@@ -69,169 +87,183 @@ class _GuestListState extends State<GuestList> {
   Widget build(BuildContext context) {
     var screenSize = MediaQuery.of(context).size;
     return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(160),
-          child: AppBar(
-            titleSpacing: 0,
-            elevation: 0.0,
-            title: const Text(
-              'Guest Page',
-              style: TextStyle(color: Colors.white),
+      backgroundColor: Colors.white,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(160),
+        child: AppBar(
+          titleSpacing: 0,
+          elevation: 0.0,
+          title: const Text(
+            'Guest Page',
+            style: TextStyle(color: Colors.white),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Log Out',
+                  style: TextStyle(
+                      fontSize: 17.0,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700)),
             ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('Log Out',
-                    style: TextStyle(
-                        fontSize: 17.0,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w700)),
-              ),
-            ],
-            flexibleSpace: Stack(
-              children: [
-                Container(
-                  alignment: Alignment.topLeft,
-                  margin: const EdgeInsets.only(top: 100, left: 20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text('Hello User',
-                          textAlign: TextAlign.start,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700)),
-                      Padding(
-                        padding: EdgeInsets.only(top: 12.0),
-                        child: SizedBox(
-                          width: 170,
-                          child: Text('Welcome to Heart 40th Aniversary ',
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 14)),
-                        ),
+          ],
+          flexibleSpace: Stack(
+            children: [
+              Container(
+                alignment: Alignment.topLeft,
+                margin: const EdgeInsets.only(top: 100, left: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text('Hello User',
+                        textAlign: TextAlign.start,
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w700)),
+                    Padding(
+                      padding: EdgeInsets.only(top: 12.0),
+                      child: SizedBox(
+                        width: 170,
+                        child: Text('Welcome to Heart 40th Aniversary ',
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 14)),
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+              ),
+              Positioned(
+                child: Container(
+                  margin: const EdgeInsets.only(left: 295.0, top: 85),
+                  width: 70,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(
+                        'assets/images/ribbon.png',
+                      ),
+                    ),
                   ),
                 ),
-                Positioned(
-                  child: Container(
-                    margin: const EdgeInsets.only(left: 295.0, top: 85),
-                    width: 70,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(
-                          'assets/images/ribbon.png',
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
+              )
+            ],
           ),
         ),
-        body: ListView(
-          padding: const EdgeInsets.all(15),
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Guest Lists ',
-                    style: TextStyle(
-                        color: Color.fromARGB(255, 153, 153, 153),
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600)),
-                Container(
-                  width: 150,
-                  height: 45,
-                  decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(Radius.circular(10)),
-                      border: Border.all(
-                          color: const Color.fromARGB(255, 231, 229, 229))),
-                  child: const Expanded(
-                      child: TextField(
-                    decoration: InputDecoration(
-                      border: InputBorder.none,
-                      hintText: 'search..',
-                      hintStyle: TextStyle(color: Colors.grey),
-                      contentPadding: EdgeInsets.all(0.0),
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: Colors.grey,
-                        size: 20,
-                      ),
-                      prefixIconConstraints:
-                          BoxConstraints(maxHeight: 20, minWidth: 25),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(15),
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Guest Lists ',
+                  style: TextStyle(
+                      color: Color.fromARGB(255, 153, 153, 153),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600)),
+              Container(
+                width: 150,
+                height: 45,
+                decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    border: Border.all(
+                        color: const Color.fromARGB(255, 231, 229, 229))),
+                child: const Expanded(
+                    child: TextField(
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: 'search..',
+                    hintStyle: TextStyle(color: Colors.grey),
+                    contentPadding: EdgeInsets.all(0.0),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: Colors.grey,
+                      size: 20,
+                    ),
+                    prefixIconConstraints:
+                        BoxConstraints(maxHeight: 20, minWidth: 25),
+                  ),
+                )),
+              )
+            ],
+          ),
+          ListView.builder(
+              shrinkWrap: true,
+              physics: const ScrollPhysics(),
+              itemCount: _registrantsList.length,
+              itemBuilder: (context, i) {
+                final registrant = _registrantsList[i];
+                return Column(children: [
+                  Card(
+                      child: ListTile(
+                    title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                              style: const TextStyle(
+                                fontSize: 18.0,
+                              ),
+                              "${registrant['first_name']}, ${registrant['last_name']}"),
+                          Text(
+                            "Reg #: ${registrant['registration_number']}",
+                            style: const TextStyle(
+                              fontSize: 14.0,
+                              fontStyle: FontStyle.italic,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ]),
+                    subtitle: Text(
+                        "${registrant['organization']}, ${registrant['department']['name']}"),
+                    trailing: PopupMenuButton(
+                      itemBuilder: (context) {
+                        return [
+                          PopupMenuItem(
+                            value: 'edit',
+                            child: TextButton(
+                                onPressed: () {
+                                  editRegistrant(registrant: registrant);
+                                },
+                                child: const Text('Edit')),
+                          ),
+                          PopupMenuItem(
+                            value: 'delete',
+                            child: TextButton(
+                                onPressed: () {
+                                  deleteRegistrant(
+                                      registrantID: registrant['_id']);
+                                  getRegistrants();
+                                },
+                                child: const Text('Delete')),
+                          ),
+                          const PopupMenuItem(
+                            value: 'generate certificate',
+                            child: Text('Generate Certificate'),
+                          ),
+                        ];
+                      },
+                      onSelected: (value) {
+                        generateCertificate(registrant: registrant["_id"]);
+                      },
                     ),
                   )),
-                )
-              ],
-            ),
-            ListView.builder(
-                shrinkWrap: true,
-                physics: const ScrollPhysics(),
-                itemCount: _registrantsList.length,
-                itemBuilder: (context, i) {
-                  final registrant = _registrantsList[i];
-                  return Column(children: [
-                    Card(
-                        child: ListTile(
-                      title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                                style: const TextStyle(
-                                  fontSize: 18.0,
-                                ),
-                                "${registrant['first_name']}, ${registrant['last_name']}"),
-                            Text(
-                              "Reg #: ${registrant['registration_number']}",
-                              style: const TextStyle(
-                                fontSize: 14.0,
-                                fontStyle: FontStyle.italic,
-                                color: Colors.grey,
-                              ),
-                            ),
-                          ]),
-                      subtitle: Text(
-                          "${registrant['organization']}, ${registrant['department']['name']}"),
-                      trailing: PopupMenuButton(
-                        itemBuilder: (context) {
-                          return [
-                            const PopupMenuItem(
-                              value: 'edit',
-                              child: Text('Edit'),
-                            ),
-                            const PopupMenuItem(
-                              value: 'delete',
-                              child: Text('Delete'),
-                            ),
-                            const PopupMenuItem(
-                              value: 'generate certificate',
-                              child: Text('Generate Certificate'),
-                            ),
-                          ];
-                        },
-                        onSelected: (value) {
-                          generateCertificate(registrant: registrant["_id"]);
-                        },
-                      ),
-                    )),
-                  ]);
-                })
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Register()),
-              ).then((value) => getRegistrants());
-            },
-            child: const Icon(Icons.add)));
+                ]);
+              })
+        ],
+      ),
+      floatingActionButton: DraggableFab(
+          child: FloatingActionButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const Register()),
+                ).then((value) => getRegistrants());
+              },
+              child: const Icon(Icons.add))),
+    );
   }
 }
+
+void showRegistrantFields({required Map<String, dynamic> registrant}) {}

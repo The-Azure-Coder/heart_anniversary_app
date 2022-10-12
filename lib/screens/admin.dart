@@ -473,7 +473,7 @@ class _AdminPageState extends State<AdminPage> {
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
+                      children: const [
                         Padding(
                           padding: EdgeInsets.only(bottom: 8.0),
                           child: Text('Department',
@@ -481,7 +481,7 @@ class _AdminPageState extends State<AdminPage> {
                                 color: Color.fromARGB(255, 119, 119, 119),
                               )),
                         ),
-                        SizedBox(width: 300, child: DropDown(list: _departList)),
+                        // SizedBox(width: 300, child: DropDown(list: _departList)),
                       ],
                     ),
                     const SizedBox(
