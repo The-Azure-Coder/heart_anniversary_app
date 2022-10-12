@@ -246,8 +246,8 @@ class _DepartmentPageState extends State<DepartmentPage> {
               padding: const EdgeInsets.all(0.0),
               child: Form(
                 child: Column(
-                  children: const <Widget>[
-                    SizedBox(width: 300, child: DropDown()),
+                  children:  <Widget>[
+                    // SizedBox(width: 300, child: DropDown(list:[])),
                   ],
                 ),
               ),
