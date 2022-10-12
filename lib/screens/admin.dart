@@ -473,7 +473,7 @@ class _AdminPageState extends State<AdminPage> {
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children:  [
                         Padding(
                           padding: EdgeInsets.only(bottom: 8.0),
                           child: Text('Department',
@@ -481,7 +481,31 @@ class _AdminPageState extends State<AdminPage> {
                                 color: Color.fromARGB(255, 119, 119, 119),
                               )),
                         ),
-                        // SizedBox(width: 300, child: DropDown(list: _departList)),
+                        SizedBox(width: 300, child: DropdownButton(
+                          isExpanded: true,
+                          // Initial Value
+                          value: "dropdownvalue",
+
+                          // Down Arrow Icon
+                          icon: const Icon(Icons.keyboard_arrow_down),
+
+                          // Array list of items
+                          items: _departList.map((list) {
+                            print(list);
+                            return DropdownMenuItem(
+                              value: list["_id"],
+                              child: new Text(list["name"]),
+                            );
+                          }).toList(),
+                          // After selecting the desired option,it will
+                          // change button value to selected value
+                          onChanged: (newValue) {
+                            print(newValue);
+                            setState(() {
+                              // dropdownvalue = newValue;
+                            });
+                          },
+                        ),),
                       ],
                     ),
                     const SizedBox(

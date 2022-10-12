@@ -206,14 +206,15 @@ class _GuestListState extends State<GuestList> {
                                 fontSize: 18.0,
                               ),
                               "${registrant['first_name']}, ${registrant['last_name']}"),
-                          Text(
-                            "Reg #: ${registrant['registration_number']}",
-                            style: const TextStyle(
-                              fontSize: 14.0,
-                              fontStyle: FontStyle.italic,
-                              color: Colors.grey,
-                            ),
-                          ),
+                            // Text(
+                            //   "Reg #: ${registrant['registration_number']}",
+                            //   style: const TextStyle(
+                            //     fontSize: 14.0,
+                            //     fontStyle: FontStyle.italic,
+                            //     color: Colors.grey,
+                            //   ),
+                            // )
+                          // }else
                         ]),
                     subtitle: Text(
                         "${registrant['organization']}, ${registrant['department']['name']}"),

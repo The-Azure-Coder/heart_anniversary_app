@@ -2,9 +2,9 @@
     package="com.example.heart_registration_app">
     <uses-permission android:name="android.permission.INTERNET" />
     <application
-        android:label="heart_registration_app"
+        android:label="Registration App"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         <activity
             android:name=".MainActivity"
             android:exported="true"
