@@ -18,6 +18,7 @@ class _AdminPageState extends State<AdminPage> {
   var _usersList = [];
   var _registrantsList = [];
   var _departList = [];
+  var chosenDep = "";
   int userCount = 0;
   int regCount = 0;
   int deptCount = 0;
@@ -25,23 +26,22 @@ class _AdminPageState extends State<AdminPage> {
   String lname = '';
   String email = '';
   String password = '';
+
   //defaulted to test until dropdown issue is resolved
   String department = "6341594525e3e385fa19bd50";
   String error = '';
-  Future<bool> register(String fname, String lname, String email,
-      String password, String department) async {
+
+  Future<bool> register(String fname, String lname, String email,String department) async {
     //check if login
     print(fname);
     print(lname);
     print(email);
-    print(password);
     print(department);
 
     Map registerStatus = jsonDecode(await NetworkHandler.post("/users", {
       "fname": fname,
       "lname": lname,
       "email": email,
-      "password": password,
       "department": department,
     }));
     print(registerStatus);
@@ -56,6 +56,22 @@ class _AdminPageState extends State<AdminPage> {
     });
     return false;
   }
+  Future<bool> updateUser(String user_id, Object updateBody) async {
+
+    Map updateStatus = jsonDecode(await NetworkHandler.post("/users/$user_id", updateBody));
+    print(updateStatus);
+    if (updateStatus["status"] == 201) {
+      print("User created");
+      print(updateStatus);
+      return true;
+    }
+
+    setState(() {
+      error = updateStatus["error"];
+    });
+    return false;
+  }
+
 
   void getUsers() async {
     try {
@@ -114,7 +130,7 @@ class _AdminPageState extends State<AdminPage> {
   }
 
   void editUser(Map<String, dynamic> user) async {
-    showDialogWithFields(user: user);
+    showDialogWithFields(user: user, operation: "UPDATE");
   }
 
   @override
@@ -323,7 +339,9 @@ class _AdminPageState extends State<AdminPage> {
                           Card(
                             child: ListTile(
                                 title: Text("${user['fname']}"),
-                                subtitle: (user['department'] != null) ? Text("${user['department']['name']}") : Text("Admin") ,
+                                subtitle: (user['department'] != null)
+                                    ? Text("${user['department']['name']}")
+                                    : Text("Admin"),
                                 trailing: PopupMenuButton(
                                   itemBuilder: (context) {
                                     return [
@@ -365,12 +383,12 @@ class _AdminPageState extends State<AdminPage> {
         ),
         floatingActionButton: FloatingActionButton(
             onPressed: () {
-              showDialogWithFields();
+              showDialogWithFields(operation:"CREATE");
             },
             child: const Icon(Icons.add)));
   }
 
-  void showDialogWithFields({Map<String, dynamic> user = const {}}) {
+  void showDialogWithFields({Map<String, dynamic> user = const {}, operation: ""}) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -384,8 +402,7 @@ class _AdminPageState extends State<AdminPage> {
                   height: 60,
                   fit: BoxFit.contain,
                 ),
-                const Text(
-                  'Create User',
+                const Text("Update User",
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -400,7 +417,8 @@ class _AdminPageState extends State<AdminPage> {
                         width: 120,
                         child: TextFormField(
                           keyboardType: TextInputType.name,
-                          initialValue: findAltText(model: user, fieldName: "fname",altText: " "),
+                          initialValue: findAltText(
+                              model: user, fieldName: "fname", altText: " "),
                           onChanged: (value) {
                             setState(() {
                               error = "";
@@ -419,7 +437,8 @@ class _AdminPageState extends State<AdminPage> {
                         width: 120,
                         child: TextFormField(
                           keyboardType: TextInputType.name,
-                          initialValue: findAltText(model: user, fieldName: "lname",altText: " "),
+                          initialValue: findAltText(
+                              model: user, fieldName: "lname", altText: " "),
                           onChanged: (value) {
                             setState(() {
                               error = "";
@@ -432,12 +451,17 @@ class _AdminPageState extends State<AdminPage> {
                         ),
                       ),
                     ]),
-                    Row(children: <Widget>[
+                    Row(
+
+                        children: <Widget>[
+
                       SizedBox(
-                        width: 120,
+
+                        width: 240,
                         child: TextFormField(
                           keyboardType: TextInputType.emailAddress,
-                          initialValue: findAltText(model: user, fieldName: "email",altText: " "),
+                          initialValue: findAltText(
+                              model: user, fieldName: "email", altText: " "),
                           onChanged: (value) {
                             setState(() {
                               error = "";
@@ -452,60 +476,53 @@ class _AdminPageState extends State<AdminPage> {
                       const SizedBox(
                         width: 15,
                       ),
-                      SizedBox(
-                        width: 120,
-                        child: TextFormField(
-                          obscureText: true,
-                          onChanged: (value) {
-                            setState(() {
-                              error = "";
-                              password = value;
-                            });
-                          },
-                          decoration: const InputDecoration(
-                            labelText: 'Password',
-                          ),
-                        ),
-                      ),
                     ]),
                     const SizedBox(
                       height: 15,
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children:  [
-                        Padding(
+                      children: [
+                        const Padding(
                           padding: EdgeInsets.only(bottom: 8.0),
                           child: Text('Department',
                               style: TextStyle(
                                 color: Color.fromARGB(255, 119, 119, 119),
                               )),
                         ),
-                        SizedBox(width: 300, child: DropdownButton(
-                          isExpanded: true,
-                          // Initial Value
-                          value: "dropdownvalue",
+                        SizedBox(
+                          width: 300,
+                          child: DropdownButton(
+                            // isExpanded: true,
+                            // Initial Value
+                            value: _departList[0]['_id'],
 
-                          // Down Arrow Icon
-                          icon: const Icon(Icons.keyboard_arrow_down),
+                            // Down Arrow Icon
+                            icon: const Icon(Icons.keyboard_arrow_down),
 
-                          // Array list of items
-                          items: _departList.map((list) {
-                            print(list);
-                            return DropdownMenuItem(
-                              value: list["_id"],
-                              child: new Text(list["name"]),
-                            );
-                          }).toList(),
-                          // After selecting the desired option,it will
-                          // change button value to selected value
-                          onChanged: (newValue) {
-                            print(newValue);
-                            setState(() {
-                              // dropdownvalue = newValue;
-                            });
-                          },
-                        ),),
+                            // Array list of items
+                            items: _departList.map((list) {
+                              return DropdownMenuItem(
+                                onTap: () {
+                                  setState(() {
+                                      department = list["_id"];
+                                      print(department);
+                                  });
+                                },
+                                value: list["_id"],
+                                child: Text(list["name"]),
+                              );
+                            }).toList(),
+                            // After selecting the desired option,it will
+                            // change button value to selected value
+                            onChanged: (newValue) {
+                              print(newValue);
+                              setState(() {
+                                // dropdownvalue = newValue;
+                              });
+                            },
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(
@@ -522,14 +539,19 @@ class _AdminPageState extends State<AdminPage> {
               ),
               TextButton(
                 onPressed: () async {
-                  if (await register(
-                      fname, lname, email, password, department)) {
-                    print('here');
+                  if(operation == "CREATE"){
+                    if(await register(fname, lname, email, department)){
+                      Navigator.pop(context);
+                      getUsers();
+                    }
+                  }else if(operation == "UPDATE"){
+                    await updateUser(user["_id"],{fname, lname, email, department});
                     Navigator.pop(context);
                     getUsers();
                   }
+
                 },
-                child: const Text('Add User'),
+                child: const Text('Update User'),
               ),
             ],
           );
@@ -537,10 +559,12 @@ class _AdminPageState extends State<AdminPage> {
   }
 }
 
-
-
-String findAltText({Map<String, dynamic>model= const {},String fieldName= "", String altText= "Alt Text"}){
-  if(model[fieldName] == null){
+String findAltText(
+    {Map<String, dynamic> model = const {},
+    String fieldName = "",
+    String altText = "Alt Text"}) {
+  if (model[fieldName] == null) {
     return altText;
-  }return model[fieldName];
+  }
+  return model[fieldName];
 }
