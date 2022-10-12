@@ -221,14 +221,14 @@ class _GuestListState extends State<GuestList> {
                     trailing: PopupMenuButton(
                       itemBuilder: (context) {
                         return [
-                          PopupMenuItem(
-                            value: 'edit',
-                            child: TextButton(
-                                onPressed: () {
-                                  editRegistrant(registrant: registrant);
-                                },
-                                child: const Text('Edit')),
-                          ),
+                          // PopupMenuItem(
+                          //   value: 'edit',
+                          //   child: TextButton(
+                          //       onPressed: () {
+                          //         editRegistrant(registrant: registrant)
+                          //       },
+                          //       child: const Text('Edit')),
+                          // ),
                           PopupMenuItem(
                             value: 'delete',
                             child: TextButton(
