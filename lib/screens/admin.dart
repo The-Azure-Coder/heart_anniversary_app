@@ -105,13 +105,12 @@ class _AdminPageState extends State<AdminPage> {
   void deleteUser({String userID = ''}) async {
     try {
       final response = await NetworkHandler.delete('/users/$userID');
-      final jsonData = jsonDecode(response)['data'];
-      print(userID);
-      print(response);
       print('deleted successfully');
-
+      _registrantsList.retainWhere((user) => user['id'] == userID);
       setState(() {});
-    } catch (err) {}
+    } catch (err) {
+      print(err);
+    }
   }
 
   void editUser(Map<String, dynamic> user) async {
@@ -123,7 +122,6 @@ class _AdminPageState extends State<AdminPage> {
     super.initState();
     getUsers();
     getdepartments();
-    getRegistrants();
   }
 
   @override
@@ -325,14 +323,16 @@ class _AdminPageState extends State<AdminPage> {
                           Card(
                             child: ListTile(
                                 title: Text("${user['fname']}"),
-                                subtitle: Text("${user['department']['name']}"),
+                                subtitle: (user['department'] != null) ? Text("${user['department']['name']}") : Text("Admin") ,
                                 trailing: PopupMenuButton(
                                   itemBuilder: (context) {
                                     return [
                                       PopupMenuItem(
                                         value: 'edit',
                                         child: TextButton(
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              editUser(user);
+                                            },
                                             child: const Text('Edit')),
                                       ),
                                       PopupMenuItem(
@@ -400,7 +400,7 @@ class _AdminPageState extends State<AdminPage> {
                         width: 120,
                         child: TextFormField(
                           keyboardType: TextInputType.name,
-                          initialValue: (user['fname']) ? user["fname"] : "",
+                          initialValue: findAltText(model: user, fieldName: "fname",altText: " "),
                           onChanged: (value) {
                             setState(() {
                               error = "";
@@ -419,6 +419,7 @@ class _AdminPageState extends State<AdminPage> {
                         width: 120,
                         child: TextFormField(
                           keyboardType: TextInputType.name,
+                          initialValue: findAltText(model: user, fieldName: "lname",altText: " "),
                           onChanged: (value) {
                             setState(() {
                               error = "";
@@ -436,6 +437,7 @@ class _AdminPageState extends State<AdminPage> {
                         width: 120,
                         child: TextFormField(
                           keyboardType: TextInputType.emailAddress,
+                          initialValue: findAltText(model: user, fieldName: "email",altText: " "),
                           onChanged: (value) {
                             setState(() {
                               error = "";
@@ -489,6 +491,7 @@ class _AdminPageState extends State<AdminPage> {
 
                           // Array list of items
                           items: _departList.map((list) {
+                            print(list);
                             return DropdownMenuItem(
                               value: list["_id"],
                               child: new Text(list["name"]),
@@ -532,4 +535,12 @@ class _AdminPageState extends State<AdminPage> {
           );
         });
   }
+}
+
+
+
+String findAltText({Map<String, dynamic>model= const {},String fieldName= "", String altText= "Alt Text"}){
+  if(model[fieldName] == null){
+    return altText;
+  }return model[fieldName];
 }

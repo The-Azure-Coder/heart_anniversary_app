@@ -1,7 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:heart_registration_app/widgets/admin_drawer.dart';
 
-import '../widgets/dropdown.dart';
+import '../services/network_handler.dart';
 
 class DepartmentPage extends StatefulWidget {
   const DepartmentPage({super.key});
@@ -11,6 +13,63 @@ class DepartmentPage extends StatefulWidget {
 }
 
 class _DepartmentPageState extends State<DepartmentPage> {
+  var _departList = [];
+  String name = '';
+  String error = '';
+  Future<bool> CreateDepartment(String department) async {
+    print(department);
+
+    Map departmentStatus =
+        jsonDecode(await NetworkHandler.post("/departments", {
+      "name": name,
+    }));
+    print(departmentStatus);
+    if (departmentStatus["status"] == 201) {
+      print("department created");
+      print(departmentStatus);
+      return true;
+    }
+
+    setState(() {
+      error = departmentStatus["error"];
+    });
+    return false;
+  }
+
+  void getdepartments() async {
+    try {
+      final response = await NetworkHandler.get(endpoint: '/departments');
+      final jsonData = jsonDecode(response)['data'];
+      print(response);
+
+      setState(() {
+        _departList = jsonData;
+      });
+    } catch (err) {}
+  }
+
+  void deleteDepartment({String departID = ''}) async {
+    try {
+      final response = await NetworkHandler.delete('/departments/$departID');
+      final jsonData = jsonDecode(response)['data'];
+      print(departID);
+      print(response);
+      print('deleted successfully');
+
+      setState(() {});
+    } catch (err) {}
+  }
+
+  void editDepartment({Map<String, dynamic> department = const {}}) async {
+    showDepartmentFields(department: department);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getdepartments();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,107 +164,58 @@ class _DepartmentPageState extends State<DepartmentPage> {
                 )
               ],
             ),
-            Container(
-              margin: const EdgeInsets.only(bottom: 10, top: 10),
-              child: Stack(
-                children: [
-                  SizedBox(
-                    height: 80,
-                    child: Card(
-                      child: ListTile(
-                          title: const Text('Customer service'),
-                          trailing: PopupMenuButton(
-                            itemBuilder: (context) {
-                              return [
-                                const PopupMenuItem(
-                                  value: 'edit',
-                                  child: Text('Edit'),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: const ScrollPhysics(),
+              itemCount: _departList.length,
+              itemBuilder: (context, i) {
+                final department = _departList[i];
+                return Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(7),
+                      child: Stack(
+                        children: [
+                          Card(
+                            child: ListTile(
+                                title: Text("${department['name']}"),
+                                leading: const Icon(
+                                  Icons.star_sharp,
+                                  color: Colors.amber,
                                 ),
-                                const PopupMenuItem(
-                                  value: 'delete',
-                                  child: Text('Delete'),
-                                )
-                              ];
-                            },
-                            onSelected: (String value) {},
-                          )),
+                                trailing: PopupMenuButton(
+                                  itemBuilder: (context) {
+                                    return [
+                                      PopupMenuItem(
+                                        value: 'edit',
+                                        child: TextButton(
+                                            onPressed: () {
+                                              editDepartment(
+                                                  department: department);
+                                            },
+                                            child: const Text('Edit')),
+                                      ),
+                                      PopupMenuItem(
+                                        value: 'delete',
+                                        child: TextButton(
+                                            onPressed: () {
+                                              deleteDepartment(
+                                                  departID: department['_id']);
+                                              getdepartments();
+                                            },
+                                            child: const Text('Delete')),
+                                      )
+                                    ];
+                                  },
+                                  onSelected: (String value) {},
+                                )),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    color: const Color.fromARGB(255, 203, 28, 252),
-                    height: 77,
-                    width: 10,
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(bottom: 10, top: 10),
-              child: Stack(
-                children: [
-                  SizedBox(
-                    height: 80,
-                    child: Card(
-                      child: ListTile(
-                          title: const Text('Adminstrative Assistant'),
-                          trailing: PopupMenuButton(
-                            itemBuilder: (context) {
-                              return [
-                                const PopupMenuItem(
-                                  value: 'edit',
-                                  child: Text('Edit'),
-                                ),
-                                const PopupMenuItem(
-                                  value: 'delete',
-                                  child: Text('Delete'),
-                                )
-                              ];
-                            },
-                            onSelected: (String value) {},
-                          )),
-                    ),
-                  ),
-                  Container(
-                    color: const Color.fromARGB(255, 230, 252, 28),
-                    height: 77,
-                    width: 10,
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: const EdgeInsets.only(bottom: 10, top: 10),
-              child: Stack(
-                children: [
-                  SizedBox(
-                    height: 80,
-                    child: Card(
-                      child: ListTile(
-                          title: const Text('Networking'),
-                          trailing: PopupMenuButton(
-                            itemBuilder: (context) {
-                              return [
-                                const PopupMenuItem(
-                                  value: 'edit',
-                                  child: Text('Edit'),
-                                ),
-                                const PopupMenuItem(
-                                  value: 'delete',
-                                  child: Text('Delete'),
-                                )
-                              ];
-                            },
-                            onSelected: (String value) {},
-                          )),
-                    ),
-                  ),
-                  Container(
-                    color: const Color.fromARGB(255, 0, 160, 141),
-                    height: 77,
-                    width: 10,
-                  ),
-                ],
-              ),
+                  ],
+                );
+              },
             ),
           ],
         ),
@@ -222,7 +232,7 @@ class _DepartmentPageState extends State<DepartmentPage> {
     );
   }
 
-  void showDepartmentFields() {
+  void showDepartmentFields({Map<String, dynamic> department = const {}}) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -246,8 +256,22 @@ class _DepartmentPageState extends State<DepartmentPage> {
               padding: const EdgeInsets.all(0.0),
               child: Form(
                 child: Column(
-                  children:  <Widget>[
-                    // SizedBox(width: 300, child: DropDown(list:[])),
+                  children: <Widget>[
+                    SizedBox(
+                        width: 300,
+                        child: TextFormField(
+                          keyboardType: TextInputType.name,
+                          initialValue: department['name'],
+                          onChanged: (value) {
+                            setState(() {
+                              error = "";
+                              name = value;
+                            });
+                          },
+                          decoration: const InputDecoration(
+                            labelText: 'Department',
+                          ),
+                        )),
                   ],
                 ),
               ),
@@ -258,8 +282,12 @@ class _DepartmentPageState extends State<DepartmentPage> {
                 child: const Text('Cancel'),
               ),
               TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
+                onPressed: () async {
+                  if (await CreateDepartment(name)) {
+                    print('here');
+                    Navigator.pop(context);
+                    getdepartments();
+                  }
                 },
                 child: const Text('Add Department'),
               ),

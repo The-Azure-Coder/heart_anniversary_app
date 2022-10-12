@@ -10,15 +10,19 @@ class NetworkHandler {
   }
 
   static Future<String> getToken() async {
-    var authToken = (await SecureStore.getToken("jwt-auth"))!;
+    var authToken = (await SecureStore.getToken("jwt-auth"))! ?? " ";
     return authToken;
   }
 
   static final client = http.Client();
 
   static Future<String> post(String endpoint, var body) async {
-    var response = await client.post(buildUrl(segment: endpoint),
-        body: jsonEncode(body), headers: {"Content-type": "application/json"});
+    token = await getToken();
+    var response = await client
+        .post(buildUrl(segment: endpoint), body: jsonEncode(body), headers: {
+      "Content-type": "application/json",
+      // "Authorization": "Bearer $token"
+    });
     return response.body;
   }
 
