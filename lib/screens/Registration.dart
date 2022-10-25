@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:heart_registration_app/screens/guest_list.dart';
 import 'package:heart_registration_app/services/network_handler.dart';
 import 'login.dart';
 import '../widgets/department_reg_dropDown.dart';
@@ -13,6 +12,9 @@ class Register extends StatefulWidget {
 }
 
 class _Register extends State<Register> {
+  var _departList = [];
+  var chosenDep = "";
+  int deptCount = 0;
   String first_name = '';
   String last_name = '';
   String email_address = '';
@@ -25,13 +27,8 @@ class _Register extends State<Register> {
   Future<bool> register(String firstName, String lastName, String emailAddress,
       String phoneNumber, String department, String organization) async {
     //check if login
-    print('Login in user');
-    print(firstName);
-    print(lastName);
-    print(emailAddress);
-    print(phoneNumber);
-    print(organization);
-    Map registerStatus = jsonDecode(await NetworkHandler.post("/registrants", {
+
+      Map registerStatus = jsonDecode(await NetworkHandler.post("/registrants", {
       "first_name": firstName,
       "last_name": lastName,
       "email_address": emailAddress,
@@ -49,6 +46,26 @@ class _Register extends State<Register> {
       error = registerStatus["error"];
     });
     return false;
+  }
+
+  void getdepartments() async {
+    try {
+      final response = await NetworkHandler.get(endpoint: '/departments');
+      final jsonData = jsonDecode(response)['data'];
+      print(response);
+
+      setState(() {
+        _departList = jsonData;
+        deptCount = _departList.length;
+      });
+    } catch (err) {}
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    getdepartments();
   }
 
   @override
@@ -272,10 +289,58 @@ class _Register extends State<Register> {
                                       TextStyle(color: Colors.grey.shade400)),
                             ),
                           )),
+                      Container(
+                        padding: EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey.withOpacity(0.5),
+                                spreadRadius: 1,
+                                blurRadius: 1.5,
+                                offset: const Offset(0, 2))
+                          ],
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10)),
+                          color: Colors.white,
+                        ),
+                        margin: EdgeInsets.only(top: 20),
+                        width: 350,
+                        child: DropdownButton(
+                          isExpanded: true,
+                          // Initial Value
+                          value: _departList[0]['_id'],
+
+                          // Down Arrow Icon
+                          icon: const Icon(Icons.keyboard_arrow_down),
+
+                          // Array list of items
+                          items: _departList.map((list) {
+                            return DropdownMenuItem(
+                              onTap: () {
+                                setState(() {
+                                  department = list["_id"];
+                                  print(department);
+                                });
+                              },
+                              value: list["_id"],
+                              child: Text(list["name"]),
+                            );
+                          }).toList(),
+                          // After selecting the desired option,it will
+                          // change button value to selected value
+                          onChanged: (newValue) {
+                            print(newValue);
+                            setState(() {
+                              // dropdownvalue = newValue;
+                            });
+                          },
+                        ),
+                      ),
+
                       const Padding(
                           padding: EdgeInsets.symmetric(vertical: 10)),
                       //someone needs to get the value this is presenting for integration of the for submit
-                      const DropDown(),
+                      // const DropDown(),
                       const Padding(
                           padding: EdgeInsets.symmetric(vertical: 10)),
                       Container(
@@ -287,22 +352,26 @@ class _Register extends State<Register> {
                           vertical: 10,
                           horizontal: 140,
                         ),
-                        child: TextButton(
-                          onPressed: () async {
-                            if (await register(
-                                first_name,
-                                last_name,
-                                email_address,
-                                phone_number,
-                                department,
-                                organization)) {
-                              Navigator.pop(context);
-                            }
-                          },
-                          child: const Text(
-                            'REGISTER',
-                            style: TextStyle(color: Colors.white),
-                            textAlign: TextAlign.center,
+                        child: SizedBox(
+                          height: 35,
+                          child: TextButton(
+                            onPressed: () async {
+                              if (await register(
+                                  first_name,
+                                  last_name,
+                                  email_address,
+                                  phone_number,
+                                  department,
+                                  organization)) {
+                                Navigator.pop(context);
+                              }
+                              
+                            },
+                            child: const Text(
+                              'REGISTER',
+                              style: TextStyle(color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                         ),
                       ),
